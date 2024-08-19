@@ -1,6 +1,8 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
 
@@ -16,7 +18,9 @@ public class Player : Character
     [SerializeField] private List<Spell> selectedSpells = new List<Spell>();
     private Slider cast;
 
-    private Stats stats;
+    public Stats stats;
+
+    [NonSerialized] public UnityEvent onStatsPressed = new UnityEvent();
 
     private void Awake()
     {
@@ -32,6 +36,8 @@ public class Player : Character
                     TryCasting(i);
         };
 
+        inputs.Gameplay.Spells.performed += ctx => onStatsPressed.Invoke();
+
         Cursor.visible = true;
     }
 
@@ -40,6 +46,7 @@ public class Player : Character
         cast = castBar.GetComponent<Slider>();
         life = 100;
         stats = Stats.NewStats();
+        stats.strength = 99;
     }
 
     private void OnEnable()
@@ -61,13 +68,16 @@ public class Player : Character
 
     private void TryCasting(int spellNumber)
     {
+        if (this.manaBar.value < selectedSpells[spellNumber].manaPerLevel * selectedSpells[spellNumber].level)
+            return;
+
         Ray ray = Camera.main.ScreenPointToRay(Mouse.current.position.ReadValue());
         
         if (Physics.Raycast(ray, out RaycastHit hit) && hit.collider.gameObject.layer == LayerMask.NameToLayer("Enemy"))
-            {
-                this.manaBar.value -= selectedSpells[spellNumber].manaPerLevel * selectedSpells[spellNumber].level;
-                StartCoroutine(CastSpell(hit.collider.gameObject, spellNumber));
-            }
+        {
+            this.manaBar.value -= selectedSpells[spellNumber].manaPerLevel * selectedSpells[spellNumber].level;
+            StartCoroutine(CastSpell(hit.collider.gameObject, spellNumber));
+        }
     }
 
     private IEnumerator CastSpell(GameObject enemy, int spellNumber)

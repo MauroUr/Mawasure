@@ -122,8 +122,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   level: 6
   dmgPerLevel: 5
-  manaPerLevel: 0
+  manaPerLevel: 2
   castDelayPerLevel: 5
   offset: {x: 1, y: 8, z: 0}
   isOneShot: 0
   target: {fileID: 0}
+  playerInt: 0

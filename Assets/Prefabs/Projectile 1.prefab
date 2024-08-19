@@ -99,11 +99,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   level: 6
   dmgPerLevel: 5
-  manaPerLevel: 0
+  manaPerLevel: 4
   castDelayPerLevel: 2
   offset: {x: 0, y: 0, z: 0}
   isOneShot: 1
   target: {fileID: 0}
+  playerInt: 0
 --- !u!65 &3841701388746528324
 BoxCollider:
   m_ObjectHideFlags: 0

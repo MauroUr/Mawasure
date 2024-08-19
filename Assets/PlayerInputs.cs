@@ -44,6 +44,33 @@ public partial class @PlayerInputs: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Stats"",
+                    ""type"": ""Button"",
+                    ""id"": ""7f617e87-4969-4195-8b86-88dab7ba6524"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Skills"",
+                    ""type"": ""Button"",
+                    ""id"": ""04add2fa-3796-4213-b3fb-d2efb7a56e34"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Equipment"",
+                    ""type"": ""Button"",
+                    ""id"": ""cce97097-5b12-4ca1-bdff-7de044011fcf"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -189,6 +216,105 @@ public partial class @PlayerInputs: IInputActionCollection2, IDisposable
                     ""action"": ""Spells"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""One Modifier"",
+                    ""id"": ""e5532232-c11f-4293-9d4a-c3a9feb46107"",
+                    ""path"": ""OneModifier"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Stats"",
+                    ""isComposite"": true,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""modifier"",
+                    ""id"": ""00836a91-b4d1-45fc-8ff9-55579ab1c631"",
+                    ""path"": ""<Keyboard>/shift"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Stats"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""binding"",
+                    ""id"": ""a3bc4efa-9422-4453-9abe-9d0e12d5350e"",
+                    ""path"": ""<Keyboard>/s"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Stats"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""One Modifier"",
+                    ""id"": ""ef0c735b-18de-4f21-8a52-dd67bdaf7626"",
+                    ""path"": ""OneModifier"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Skills"",
+                    ""isComposite"": true,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""modifier"",
+                    ""id"": ""3f38a914-7c15-42fb-a6fe-80d6c223e4ce"",
+                    ""path"": ""<Keyboard>/ctrl"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Skills"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""binding"",
+                    ""id"": ""4c69d103-8ff0-4019-89d1-895aff030180"",
+                    ""path"": ""<Keyboard>/t"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Skills"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""One Modifier"",
+                    ""id"": ""1edb625c-9022-4de3-b7a7-9ee87f37efc7"",
+                    ""path"": ""OneModifier"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Equipment"",
+                    ""isComposite"": true,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""modifier"",
+                    ""id"": ""11913105-0543-4849-9ddc-d7e5befe7ad1"",
+                    ""path"": ""<Keyboard>/ctrl"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Equipment"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""binding"",
+                    ""id"": ""dbcf8388-56f2-41f3-bb48-7867344e5436"",
+                    ""path"": ""<Keyboard>/e"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Equipment"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
                 }
             ]
         }
@@ -199,6 +325,9 @@ public partial class @PlayerInputs: IInputActionCollection2, IDisposable
         m_Gameplay = asset.FindActionMap("Gameplay", throwIfNotFound: true);
         m_Gameplay_RightClick = m_Gameplay.FindAction("RightClick", throwIfNotFound: true);
         m_Gameplay_Spells = m_Gameplay.FindAction("Spells", throwIfNotFound: true);
+        m_Gameplay_Stats = m_Gameplay.FindAction("Stats", throwIfNotFound: true);
+        m_Gameplay_Skills = m_Gameplay.FindAction("Skills", throwIfNotFound: true);
+        m_Gameplay_Equipment = m_Gameplay.FindAction("Equipment", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -262,12 +391,18 @@ public partial class @PlayerInputs: IInputActionCollection2, IDisposable
     private List<IGameplayActions> m_GameplayActionsCallbackInterfaces = new List<IGameplayActions>();
     private readonly InputAction m_Gameplay_RightClick;
     private readonly InputAction m_Gameplay_Spells;
+    private readonly InputAction m_Gameplay_Stats;
+    private readonly InputAction m_Gameplay_Skills;
+    private readonly InputAction m_Gameplay_Equipment;
     public struct GameplayActions
     {
         private @PlayerInputs m_Wrapper;
         public GameplayActions(@PlayerInputs wrapper) { m_Wrapper = wrapper; }
         public InputAction @RightClick => m_Wrapper.m_Gameplay_RightClick;
         public InputAction @Spells => m_Wrapper.m_Gameplay_Spells;
+        public InputAction @Stats => m_Wrapper.m_Gameplay_Stats;
+        public InputAction @Skills => m_Wrapper.m_Gameplay_Skills;
+        public InputAction @Equipment => m_Wrapper.m_Gameplay_Equipment;
         public InputActionMap Get() { return m_Wrapper.m_Gameplay; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -283,6 +418,15 @@ public partial class @PlayerInputs: IInputActionCollection2, IDisposable
             @Spells.started += instance.OnSpells;
             @Spells.performed += instance.OnSpells;
             @Spells.canceled += instance.OnSpells;
+            @Stats.started += instance.OnStats;
+            @Stats.performed += instance.OnStats;
+            @Stats.canceled += instance.OnStats;
+            @Skills.started += instance.OnSkills;
+            @Skills.performed += instance.OnSkills;
+            @Skills.canceled += instance.OnSkills;
+            @Equipment.started += instance.OnEquipment;
+            @Equipment.performed += instance.OnEquipment;
+            @Equipment.canceled += instance.OnEquipment;
         }
 
         private void UnregisterCallbacks(IGameplayActions instance)
@@ -293,6 +437,15 @@ public partial class @PlayerInputs: IInputActionCollection2, IDisposable
             @Spells.started -= instance.OnSpells;
             @Spells.performed -= instance.OnSpells;
             @Spells.canceled -= instance.OnSpells;
+            @Stats.started -= instance.OnStats;
+            @Stats.performed -= instance.OnStats;
+            @Stats.canceled -= instance.OnStats;
+            @Skills.started -= instance.OnSkills;
+            @Skills.performed -= instance.OnSkills;
+            @Skills.canceled -= instance.OnSkills;
+            @Equipment.started -= instance.OnEquipment;
+            @Equipment.performed -= instance.OnEquipment;
+            @Equipment.canceled -= instance.OnEquipment;
         }
 
         public void RemoveCallbacks(IGameplayActions instance)
@@ -314,5 +467,8 @@ public partial class @PlayerInputs: IInputActionCollection2, IDisposable
     {
         void OnRightClick(InputAction.CallbackContext context);
         void OnSpells(InputAction.CallbackContext context);
+        void OnStats(InputAction.CallbackContext context);
+        void OnSkills(InputAction.CallbackContext context);
+        void OnEquipment(InputAction.CallbackContext context);
     }
 }
