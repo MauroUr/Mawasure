@@ -6,6 +6,7 @@ public class CursorManager : MonoBehaviour
 {
     public static CursorManager instance;
     private Dictionary<string, Texture2D> cursorTextures;
+    private string currentCursor;
 
     void Start()
     {
@@ -25,6 +26,11 @@ public class CursorManager : MonoBehaviour
         Cursor.SetCursor(cursorTextures["Basic"], Vector2.one, CursorMode.Auto);
     }
 
+    public string GetCurrentCursor()
+    {
+        return currentCursor;
+    }
+
     private void LoadTextures()
     {
         cursorTextures = new Dictionary<string, Texture2D>();
@@ -34,9 +40,14 @@ public class CursorManager : MonoBehaviour
             cursorTextures[texture.name] = texture;
     }
 
-    // Update is called once per frame
-    void Update()
+    public void ChangeCursor(string cursorName)
     {
-        
+        if (cursorTextures.ContainsKey(cursorName))
+        {
+            Cursor.SetCursor(cursorTextures[cursorName], Vector2.one, CursorMode.Auto);
+            currentCursor = cursorName;
+        }
+        else
+            Debug.LogWarning("Este cursor no existe o lo pusiste en la carpeta equivocada: " + cursorName);
     }
 }

@@ -10,7 +10,7 @@ public class WindowsManager : MonoBehaviour
     [SerializeField] private GameObject statsPanel;
     [SerializeField] private List<TextMeshProUGUI> stats;
 
-    private void Awake()
+    private void Start()
     {
         Player player = GameObject.FindGameObjectWithTag("Player").GetComponent<Player>();
         player.onStatsPressed.AddListener(ShowStatsPanel);
