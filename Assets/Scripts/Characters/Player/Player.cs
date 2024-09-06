@@ -11,19 +11,20 @@ public class Player : Character
     private PlayerInput inputs;
     private InputAction rightclick;
     private InputAction spells;
+    private InputAction statsPanel;
     private Animator animator;
-
+    private SpellController spellController = new();
     private Vector3 nextPosition;
 
     [SerializeField] private Slider manaBar;
     [SerializeField] private GameObject castBar;
 
-    [SerializeField] private List<Spell> selectedSpells = new List<Spell>();
+    private List<Spells> selectedSpells;
     private Slider cast;
 
     public Stats stats;
 
-    [NonSerialized] public UnityEvent onStatsPressed = new UnityEvent();
+    public event Action onStatsPressed;
 
     private void Awake()
     {
@@ -34,6 +35,8 @@ public class Player : Character
         
         spells = inputs.actions.FindAction("Spells");
 
+        statsPanel = inputs.actions.FindAction("Stats");
+
         Cursor.visible = true;
     }
 
@@ -42,7 +45,17 @@ public class Player : Character
         cast = castBar.GetComponent<Slider>();
         life = 100;
         stats = Stats.NewStats();
-        stats.strength = 99;
+        stats.dexterity = 99;
+        StartCoroutine(GetUnlockedSpells());
+        
+    }
+
+    private IEnumerator GetUnlockedSpells()
+    {
+        while (!ServiceLocator.instance.GetService<SpellService>(typeof(SpellService)))
+            yield return null;
+
+        selectedSpells = ServiceLocator.instance.GetService<SpellService>(typeof(SpellService)).GetAllSpells();
     }
 
     private void OnEnable()
@@ -57,6 +70,7 @@ public class Player : Character
                 if (bindingPath == ("/Keyboard/f" + (i + 1)))
                     TryCasting(i);
         };
+        statsPanel.performed += _ => onStatsPressed?.Invoke();
     }
 
     private void OnDisable()
@@ -71,6 +85,7 @@ public class Player : Character
                 if (bindingPath == ("/Keyboard/f" + (i + 1)))
                     TryCasting(i);
         };
+        statsPanel.performed -= _ => onStatsPressed?.Invoke();
     }
 
     private void GoToPosition(InputAction.CallbackContext context)
@@ -82,23 +97,23 @@ public class Player : Character
 
     private void TryCasting(int spellNumber)
     {
-        if (this.manaBar.value < selectedSpells[spellNumber].manaPerLevel * selectedSpells[spellNumber].level || castBar.activeSelf)
+        if (this.manaBar.value < selectedSpells[spellNumber].manaPerLevel * selectedSpells[spellNumber].level && !castBar.activeSelf)
             return;
 
-        CursorManager.instance.ChangeCursor("SpellSelect");
+        CursorManager.instance.ChangeCursor(CursorManager.CursorTypes.SpellSelect);
         StartCoroutine(SpellSelection(spellNumber));
     }
     private IEnumerator SpellSelection(int spellNumber)
     {
         Ray ray = Camera.main.ScreenPointToRay(Mouse.current.position.ReadValue());
-        CursorManager.instance.ChangeCursor("SpellSelect");
+        CursorManager.instance.ChangeCursor(CursorManager.CursorTypes.SpellSelect);
         
-        while (CursorManager.instance.GetCurrentCursor() == "SpellSelect")
+        while (CursorManager.instance.GetCurrentCursor() == CursorManager.CursorTypes.SpellSelect)
         {
             if (Input.GetMouseButtonDown(0))
             {
                 ray = Camera.main.ScreenPointToRay(Mouse.current.position.ReadValue());
-                CursorManager.instance.ChangeCursor("Basic");
+                CursorManager.instance.ChangeCursor(CursorManager.CursorTypes.Basic);
             }
             else
                 yield return null;
@@ -125,13 +140,9 @@ public class Player : Character
                 }
 
                 yield return StartCoroutine(CastSpell(closestEnemy.gameObject, spellNumber));
-                yield break;
             }
         }
-        yield break;
     }
-
-
 
     private IEnumerator CastSpell(GameObject enemy, int spellNumber)
     {
@@ -150,33 +161,30 @@ public class Player : Character
         if (this.transform.position != nextPosition)
             yield break;
         
-        if (!selectedSpells[spellNumber].isOneShot)
-            for (int i = 0; i < selectedSpells[spellNumber].level; i++)
-            {
-                animator.SetTrigger("Casted");
-                Spell.Cast(selectedSpells[spellNumber].gameObject, this.transform.position, enemy.transform, this.stats.intelligence);
-                yield return new WaitForSeconds(0.1f);
-            }
-        else
-            Spell.Cast(selectedSpells[spellNumber].gameObject, this.transform.position, enemy.transform, this.stats.intelligence);
+        animator.SetTrigger("Casted");
+        spellController.Cast(selectedSpells[spellNumber], this.transform.position, enemy.transform, this.stats.intelligence);
         
         this.manaBar.value -= selectedSpells[spellNumber].manaPerLevel * selectedSpells[spellNumber].level;
     }
 
-    void Update()
+    private void Update()
     {
-
         if (this.manaBar.value < 100)
             this.manaBar.value += 0.002f * this.stats.intelligence;
+    }
+
+    private void FixedUpdate()
+    {
         if (transform.position != nextPosition)
         {
             animator.SetBool("Run", true);
             nextPosition.y = transform.position.y;
             transform.position = Vector3.MoveTowards(transform.position, nextPosition, Time.deltaTime * 5f);
-            if ((nextPosition - transform.position) != Vector3.zero) 
+            if ((nextPosition - transform.position) != Vector3.zero)
                 this.transform.rotation = Quaternion.LookRotation(nextPosition - transform.position);
 
-        }else
+        }
+        else
             animator.SetBool("Run", false);
     }
 }

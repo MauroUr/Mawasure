@@ -12,8 +12,8 @@ public class WindowsManager : MonoBehaviour
 
     private void Start()
     {
-        Player player = GameObject.FindGameObjectWithTag("Player").GetComponent<Player>();
-        player.onStatsPressed.AddListener(ShowStatsPanel);
+        player = GameObject.FindGameObjectWithTag("Player").GetComponent<Player>();
+        player.onStatsPressed += delegate () { ShowStatsPanel(); };
     }
 
     private void ShowStatsPanel()
@@ -38,5 +38,19 @@ public class WindowsManager : MonoBehaviour
             player.stats.vitality = Int32.Parse(stats[4].text);
             player.stats.luck = Int32.Parse(stats[5].text);
         }
+    }
+
+    public void StatIncrease(TextMeshProUGUI statChanged)
+    {
+        int value = Int32.Parse(statChanged.text);
+        value++;
+        statChanged.text = value.ToString();
+    }
+
+    public void StatDecrease(TextMeshProUGUI statChanged)
+    {
+        int value = Int32.Parse(statChanged.text);
+        value--;
+        statChanged.text = value.ToString();
     }
 }

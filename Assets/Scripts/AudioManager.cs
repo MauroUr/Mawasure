@@ -9,7 +9,7 @@ public class AudioManager : MonoBehaviour
     private AudioSource audioSource;
     private Dictionary<string, AudioClip> audioClips;
 
-    void Start()
+    private void Start()
     {
         if (instance == null)
         {

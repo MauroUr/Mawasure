@@ -11,7 +11,6 @@ GameObject:
   - component: {fileID: 7603938499107330850}
   - component: {fileID: 5317188879147344591}
   - component: {fileID: 575467916399936005}
-  - component: {fileID: 2031202975069742404}
   - component: {fileID: 3841701388746528324}
   m_Layer: 0
   m_Name: Projectile 1
@@ -85,26 +84,6 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!114 &2031202975069742404
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1253317631034815755}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cf55f588a3d449846bff8492dfe9488b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  level: 6
-  dmgPerLevel: 5
-  manaPerLevel: 4
-  castDelayPerLevel: 2
-  offset: {x: 0, y: 0, z: 0}
-  isOneShot: 1
-  target: {fileID: 0}
-  playerInt: 0
 --- !u!65 &3841701388746528324
 BoxCollider:
   m_ObjectHideFlags: 0
