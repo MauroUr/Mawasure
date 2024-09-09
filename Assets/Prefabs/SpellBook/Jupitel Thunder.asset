@@ -12,10 +12,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fab3051ca1563b74195581d3b580b436, type: 3}
   m_Name: Jupitel Thunder
   m_EditorClassIdentifier: 
+  id: 1
   level: 1
   dmgPerLevel: 5
   manaPerLevel: 3
   castDelayPerLevel: 2
   prefab: {fileID: 1253317631034815755, guid: e8d0cb1edd5fbd34ba470b2369778f32, type: 3}
   offset: {x: 5, y: 10, z: 0}
-  isOneShot: 1
+  spellCastingStrategy: {fileID: 11400000, guid: 2ed02099f2450454fab35e498a6fc410,
+    type: 2}

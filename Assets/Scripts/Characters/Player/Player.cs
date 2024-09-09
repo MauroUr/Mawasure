@@ -13,7 +13,6 @@ public class Player : Character
     private InputAction spells;
     private InputAction statsPanel;
     private Animator animator;
-    private SpellController spellController = new();
     private Vector3 nextPosition;
 
     [SerializeField] private Slider manaBar;
@@ -95,6 +94,7 @@ public class Player : Character
             nextPosition = hit.point;
     }
 
+    #region SpellCasting
     private void TryCasting(int spellNumber)
     {
         if (this.manaBar.value < selectedSpells[spellNumber].manaPerLevel * selectedSpells[spellNumber].level && !castBar.activeSelf)
@@ -162,10 +162,11 @@ public class Player : Character
             yield break;
         
         animator.SetTrigger("Casted");
-        spellController.Cast(selectedSpells[spellNumber], this.transform.position, enemy.transform, this.stats.intelligence);
+        SpellController.Cast(selectedSpells[spellNumber], this.transform.position, enemy.transform, this.stats.intelligence);
         
         this.manaBar.value -= selectedSpells[spellNumber].manaPerLevel * selectedSpells[spellNumber].level;
     }
+    #endregion
 
     private void Update()
     {
