@@ -4,8 +4,6 @@ using UnityEngine;
 
 public class SpellListUI : MonoBehaviour
 {
-    [SerializeField] private string spellServiceName = "SpellService";
-
     [ContextMenu("Show spells")]
     private void AccessService()
     {
@@ -14,8 +12,5 @@ public class SpellListUI : MonoBehaviour
             return;
 
         List<Spells> spells = service.GetAllSpells();
-        
-        foreach (var spell in spells)
-            Debug.Log(spell.name);
     }
 }

@@ -5,14 +5,12 @@ using UnityEngine;
 
 public class ProjectileFlyweight : MonoBehaviour
 {
-    public Texture texture;
-    public Color color;
-    public Vector2 size;
+    public Material material;
+    public Vector3 size;
 
-    public ProjectileFlyweight(Texture texture, Color color, Vector2 size)
+    public ProjectileFlyweight(Material material, Vector3 size)
     {
-        this.texture = texture;
-        this.color = color;
+        this.material = material;
         this.size = size;
     }
 }

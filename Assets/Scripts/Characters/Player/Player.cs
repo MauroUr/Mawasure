@@ -8,17 +8,17 @@ using UnityEngine.UI;
 
 public class Player : Character
 {
-    private PlayerInput inputs;
-    private InputAction rightclick;
-    private InputAction spells;
-    private InputAction statsPanel;
-    private Animator animator;
-    private Vector3 nextPosition;
+    private PlayerInput _inputs;
+    private InputAction _rightclick;
+    private InputAction _spells;
+    private InputAction _statsPanel;
+    private Animator _animator;
+    private Vector3 _nextPosition;
 
     [SerializeField] private Slider manaBar;
     [SerializeField] private GameObject castBar;
 
-    private List<Spells> selectedSpells;
+    private List<Spells> _selectedSpells;
     private Slider cast;
 
     public Stats stats;
@@ -27,14 +27,14 @@ public class Player : Character
 
     private void Awake()
     {
-        inputs = this.GetComponent<PlayerInput>();
-        animator = GetComponent<Animator>();
+        _inputs = this.GetComponent<PlayerInput>();
+        _animator = GetComponent<Animator>();
 
-        rightclick = inputs.actions.FindAction("RightClick");
+        _rightclick = _inputs.actions.FindAction("RightClick");
         
-        spells = inputs.actions.FindAction("Spells");
+        _spells = _inputs.actions.FindAction("Spells");
 
-        statsPanel = inputs.actions.FindAction("Stats");
+        _statsPanel = _inputs.actions.FindAction("Stats");
 
         Cursor.visible = true;
     }
@@ -51,17 +51,17 @@ public class Player : Character
 
     private IEnumerator GetUnlockedSpells()
     {
-        while (!ServiceLocator.instance.GetService<SpellService>(typeof(SpellService)))
+        while (ServiceLocator.instance.GetService<SpellService>(typeof(SpellService)) == null)
             yield return null;
 
-        selectedSpells = ServiceLocator.instance.GetService<SpellService>(typeof(SpellService)).GetAllSpells();
+        _selectedSpells = ServiceLocator.instance.GetService<SpellService>(typeof(SpellService)).GetAllSpells();
     }
 
     private void OnEnable()
     {
-        inputs.ActivateInput();
-        rightclick.performed += GoToPosition;
-        spells.performed += ctx =>
+        _inputs.ActivateInput();
+        _rightclick.performed += GoToPosition;
+        _spells.performed += ctx =>
         {
             string bindingPath = ctx.control.path;
 
@@ -69,14 +69,14 @@ public class Player : Character
                 if (bindingPath == ("/Keyboard/f" + (i + 1)))
                     TryCasting(i);
         };
-        statsPanel.performed += _ => onStatsPressed?.Invoke();
+        _statsPanel.performed += _ => onStatsPressed?.Invoke();
     }
 
     private void OnDisable()
     {
-        inputs.DeactivateInput();
-        rightclick.performed -= GoToPosition;
-        spells.performed -= ctx =>
+        _inputs.DeactivateInput();
+        _rightclick.performed -= GoToPosition;
+        _spells.performed -= ctx =>
         {
             string bindingPath = ctx.control.path;
 
@@ -84,20 +84,20 @@ public class Player : Character
                 if (bindingPath == ("/Keyboard/f" + (i + 1)))
                     TryCasting(i);
         };
-        statsPanel.performed -= _ => onStatsPressed?.Invoke();
+        _statsPanel.performed -= _ => onStatsPressed?.Invoke();
     }
 
     private void GoToPosition(InputAction.CallbackContext context)
     {
         Ray ray = Camera.main.ScreenPointToRay(Mouse.current.position.ReadValue());
         if (Physics.Raycast(ray, out RaycastHit hit))
-            nextPosition = hit.point;
+            _nextPosition = hit.point;
     }
 
     #region SpellCasting
     private void TryCasting(int spellNumber)
     {
-        if (this.manaBar.value < selectedSpells[spellNumber].manaPerLevel * selectedSpells[spellNumber].level && !castBar.activeSelf)
+        if (this.manaBar.value < _selectedSpells[spellNumber].manaPerLevel * _selectedSpells[spellNumber].level && !castBar.activeSelf)
             return;
 
         CursorManager.instance.ChangeCursor(CursorManager.CursorTypes.SpellSelect);
@@ -147,24 +147,24 @@ public class Player : Character
     private IEnumerator CastSpell(GameObject enemy, int spellNumber)
     {
         castBar.SetActive(true);
-        animator.SetBool("Cast", true);
-        while (cast.value < 100 && this.transform.position == nextPosition)
+        _animator.SetBool("Cast", true);
+        while (cast.value < 100 && this.transform.position == _nextPosition)
         {
-            cast.value += this.stats.dexterity * (selectedSpells[spellNumber].level / selectedSpells[spellNumber].castDelayPerLevel) * Time.deltaTime * 5;
+            cast.value += this.stats.dexterity * (_selectedSpells[spellNumber].level / _selectedSpells[spellNumber].castDelayPerLevel) * Time.deltaTime * 5;
             this.transform.rotation = Quaternion.LookRotation(enemy.transform.position - transform.position);
             yield return null;
         }
-        animator.SetBool("Cast", false);
+        _animator.SetBool("Cast", false);
         cast.value = 0;
         castBar.SetActive(false);
 
-        if (this.transform.position != nextPosition)
+        if (this.transform.position != _nextPosition)
             yield break;
         
-        animator.SetTrigger("Casted");
-        SpellController.Cast(selectedSpells[spellNumber], this.transform.position, enemy.transform, this.stats.intelligence);
+        _animator.SetTrigger("Casted");
+        SpellController.Cast(_selectedSpells[spellNumber], this.transform.position, enemy.transform, this.stats.intelligence);
         
-        this.manaBar.value -= selectedSpells[spellNumber].manaPerLevel * selectedSpells[spellNumber].level;
+        this.manaBar.value -= _selectedSpells[spellNumber].manaPerLevel * _selectedSpells[spellNumber].level;
     }
     #endregion
 
@@ -176,16 +176,16 @@ public class Player : Character
 
     private void FixedUpdate()
     {
-        if (transform.position != nextPosition)
+        if (transform.position != _nextPosition)
         {
-            animator.SetBool("Run", true);
-            nextPosition.y = transform.position.y;
-            transform.position = Vector3.MoveTowards(transform.position, nextPosition, Time.deltaTime * 5f);
-            if ((nextPosition - transform.position) != Vector3.zero)
-                this.transform.rotation = Quaternion.LookRotation(nextPosition - transform.position);
+            _animator.SetBool("Run", true);
+            _nextPosition.y = transform.position.y;
+            transform.position = Vector3.MoveTowards(transform.position, _nextPosition, Time.deltaTime * 5f);
+            if ((_nextPosition - transform.position) != Vector3.zero)
+                this.transform.rotation = Quaternion.LookRotation(_nextPosition - transform.position);
 
         }
         else
-            animator.SetBool("Run", false);
+            _animator.SetBool("Run", false);
     }
 }

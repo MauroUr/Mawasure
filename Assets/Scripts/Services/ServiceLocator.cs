@@ -22,8 +22,9 @@ public class ServiceLocator : MonoBehaviour
     }
     public T GetService<T>(Type serviceType) where T : MonoBehaviour
     {
-        return servicesByName[serviceType] as T;
-        //serviceByName.TryGetValue(serviceName, out var service)
+        if (servicesByName.ContainsKey(serviceType))
+            return servicesByName[serviceType] as T;
+        else return null;    
     }
     public void SetService(Type serviceType, MonoBehaviour value)
     {
