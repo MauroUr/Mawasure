@@ -1,9 +1,5 @@
-using System;
 using System.Collections;
-using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.InputSystem;
 
 public class SpellController : MonoBehaviour
 {
@@ -13,6 +9,12 @@ public class SpellController : MonoBehaviour
 
     private void Update()
     {
+        if (_target == null)
+        {
+            Destroy(this.gameObject);
+            return;
+        }
+
         this.transform.position = Vector3.MoveTowards(this.transform.position, _target.position, 0.1f);
 
         Vector3 direction = _target.position - this.transform.position;
@@ -21,45 +23,21 @@ public class SpellController : MonoBehaviour
     }
     public static void Cast(Spells spell,Vector3 playerPos, Transform target, int playerInt)
     {
-        SpellController.ExecuteCastingStrategy(spell, playerPos, target, playerInt);
+        spell.conditionalData.strategy.Cast(spell, playerPos, target, playerInt);
     }
 
-    private static void ExecuteCastingStrategy(Spells spell, Vector3 playerPos, Transform target, int playerInt)
+    public SpellController Instantiation(Spells spell, Vector3 playerPos)
     {
-        SpellController controller;
-        switch (spell.conditionalData.strategy)
-        {
-            case ConditionalData.castingStrategy.Single:
-                controller = Instantiate(spell.prefab, playerPos + spell.offset, Quaternion.identity).GetComponent<SpellController>();
-                controller._target = target;
-                controller._playerInt = playerInt;
-                controller._currentSpell = spell;
-                break;
-            case ConditionalData.castingStrategy.Multiple:
-                controller = Instantiate(spell.prefab, playerPos + spell.offset, Quaternion.identity).GetComponent<SpellController>();
-                controller._target = target;
-                controller._playerInt = playerInt;
-                controller._currentSpell = spell;
-                FlyweightFactory.instance.SuscribeProjectile(spell.id, controller.gameObject.GetComponent<MeshRenderer>());
-                controller.MultiCast(playerPos);
-                break;
-            case ConditionalData.castingStrategy.AOE:
-                
-                break;
-            case ConditionalData.castingStrategy.Chains:
-                
-                break;
-        }
+        return Instantiate(spell.prefab, playerPos + spell.offset, Quaternion.identity).GetComponent<SpellController>();
     }
-
     public void MultiCast(Vector3 playerPos)
     {
         StartCoroutine(Multicast(playerPos));
     }
     private IEnumerator Multicast(Vector3 playerPos)
     {
-        yield return new WaitForSeconds(0.1f);
-        for (int i = 0; i < _currentSpell.level-1; i++)
+        yield return new WaitForSecondsRealtime(0.2f);
+        for (int i = 0; i < _currentSpell.level - 1; i++)
         {
             ProjectileFlyweight flyweight = FlyweightFactory.instance.GetProjectile(_currentSpell.id);
             SpellController controller = _currentSpell.prefab.gameObject.GetComponent<SpellController>();
@@ -71,12 +49,13 @@ public class SpellController : MonoBehaviour
             mesh.material = flyweight.material;
             mesh.bounds.size.Set(flyweight.size.x, flyweight.size.y, flyweight.size.z);
 
-            yield return new WaitForSeconds(0.1f);
+            yield return new WaitForSecondsRealtime(0.2f);
         }
     }
+
     private void OnTriggerEnter(Collider other)
     {
-        if (_currentSpell.conditionalData.strategy is ConditionalData.castingStrategy.Single)
+        if (_currentSpell.conditionalData.strategy is SingleStrategy)
             other.gameObject.GetComponent<Character>().TakeDamage(_currentSpell.dmgPerLevel * _currentSpell.level * _playerInt);
         else
             other.gameObject.GetComponent<Character>().TakeDamage(_currentSpell.dmgPerLevel);

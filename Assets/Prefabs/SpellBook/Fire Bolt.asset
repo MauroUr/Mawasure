@@ -21,8 +21,15 @@ MonoBehaviour:
   prefab: {fileID: 1253317631034815755, guid: e8d0cb1edd5fbd34ba470b2369778f32, type: 3}
   offset: {x: 5, y: 10, z: 0}
   conditionalData:
-    strategy: 1
+    strategy:
+      rid: 3967999530359849300
     maxEnemiesAffected: 0
     rangeBetweenEnemies: 0
     length: 0
     width: 0
+  references:
+    version: 2
+    RefIds:
+    - rid: 3967999530359849300
+      type: {class: MultipleStrategy, ns: , asm: Assembly-CSharp}
+      data: 

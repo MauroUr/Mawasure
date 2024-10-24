@@ -9,7 +9,7 @@ public abstract class Character : MonoBehaviour
     protected float speed;
     [SerializeField] protected Slider healthBar;
 
-    public void TakeDamage(float damage)
+    public virtual void TakeDamage(float damage)
     {
         this.life -= damage;
         healthBar.value = life;
