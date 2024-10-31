@@ -190,7 +190,7 @@ public class WindowsManager : MonoBehaviour
 
         foreach(var item in spellsLevelBeforeApply)
         {
-            if(maxSpellsLevel.ContainsKey(item.Key) && int.Parse(maxSpellsLevel[item.Key]) < int.Parse(item.Key.text))
+            if(!maxSpellsLevel.ContainsKey(item.Key) || maxSpellsLevel.ContainsKey(item.Key) && int.Parse(maxSpellsLevel[item.Key]) < int.Parse(item.Key.text))
                 hasApplied = false;
         }
 

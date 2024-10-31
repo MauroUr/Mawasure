@@ -1,8 +1,9 @@
+using System;
 using System.Collections;
 using System.Linq;
+using System.Timers;
 using UnityEngine;
 using UnityEngine.AI;
-using UnityEngine.Events;
 
 public class Enemy : Character
 {
@@ -19,11 +20,17 @@ public class Enemy : Character
     private States _state;
     private bool isIdleAfterRoam = false;
     
+    private Timer angerTimer;
+    private bool isAngry = false;
+    
     private void Start()
     {
         this.life = 100;
         _agent = GetComponent<NavMeshAgent>();
         _attackRadius = _agent.stoppingDistance;
+        angerTimer = new Timer(5000); 
+        angerTimer.Elapsed += OnAngerTimerElapsed;
+        angerTimer.AutoReset = false;
     }
     private void LateUpdate()
     {
@@ -53,7 +60,7 @@ public class Enemy : Character
 
                 float distance = Vector3.Distance(_playerFound.transform.position, this.transform.position);
 
-                if(distance > radius)
+                if(distance > radius && !isAngry)
                 {
                     ChangeState(States.IDLE);
                     break;
@@ -64,6 +71,7 @@ public class Enemy : Character
                     animator.SetTrigger("Attack");
                     _lastAttack = 0;
                     animator.SetBool("Run", false);
+                    ChangeState(States.ATTACK);
                 }
                 else
                 {
@@ -94,14 +102,14 @@ public class Enemy : Character
                 }
                 else if (_state != States.ATTACK)
                 {
-                    if (Random.Range(0, 1) == 0 && canCast)
+                    if (UnityEngine.Random.Range(0, 1) == 0 && canCast)
                         ChangeState(States.CAST);
                     else
                         ChangeState(States.ATTACK);
                     StopAllCoroutines();
                 }
             }
-            else if (!isIdleAfterRoam && Random.Range(0, 5) == 0 && !_agent.pathPending)
+            else if (!isIdleAfterRoam && UnityEngine.Random.Range(0, 5) == 0 && !_agent.pathPending)
                 StartCoroutine(Roam());
 
             yield return new WaitForSeconds(0.3f);
@@ -114,7 +122,7 @@ public class Enemy : Character
 
         float minRoamDistance = radius / 2; 
         float maxRoamDistance = radius;
-        Vector2 randomDirection = Random.insideUnitCircle.normalized * Random.Range(minRoamDistance, maxRoamDistance);
+        Vector2 randomDirection = UnityEngine.Random.insideUnitCircle.normalized * UnityEngine.Random.Range(minRoamDistance, maxRoamDistance);
 
         Vector3 roamPosition = new Vector3(randomDirection.x, 0, randomDirection.y) + transform.position;
 
@@ -139,7 +147,8 @@ public class Enemy : Character
         base.TakeDamage(damage);
 
         _playerFound = Physics.OverlapSphere(transform.position, 100, 1 << 3).FirstOrDefault();
-        _state = States.ATTACK;
+        StopAllCoroutines();
+        StartAngerTimer(); 
 
         if (life <= 0)
         {
@@ -147,7 +156,16 @@ public class Enemy : Character
             Destroy(this.gameObject);
         }
     }
-
+    private void StartAngerTimer()
+    {
+        ChangeState(States.ATTACK);
+        isAngry = true;
+        angerTimer.Start();
+    }
+    private void OnAngerTimerElapsed(object sender, ElapsedEventArgs e)
+    {
+        isAngry = false;
+    }
     public enum States
     {
         IDLE,
