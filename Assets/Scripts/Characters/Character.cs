@@ -6,7 +6,6 @@ using UnityEngine.UI;
 public abstract class Character : MonoBehaviour
 {
     protected float life;
-    protected float speed;
     [SerializeField] protected Slider healthBar;
 
     public virtual void TakeDamage(float damage)

@@ -7,8 +7,7 @@ public class MultipleStrategy : SpellCastingStrategy
 {
     public override void Cast(Spells spell, Vector3 playerPos, Transform target, int playerInt)
     {
-        SpellController controller = new SpellController();
-        controller = controller.Instantiation(spell, playerPos);
+        SpellController controller = SpellController.Instantiation(spell, playerPos);
         controller._target = target;
         controller._playerInt = playerInt;
         controller._currentSpell = spell;

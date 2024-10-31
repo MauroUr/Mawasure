@@ -8,95 +8,84 @@ using UnityEngine.UI;
 public class Player : Character
 {
     private PlayerInput _inputs;
-    private InputAction _rightclick;
-    private InputAction _spells;
-    private InputAction _spellsUI;
-    private InputAction _statsPanel;
+    private InputAction _rightClickAction;
+    private InputAction _spellsAction;
+    private InputAction _spellsUIAction;
+    private InputAction _statsPanelAction;
     private Animator _animator;
-    [SerializeField] private List<string> animations = new ();
+
+    [SerializeField] private List<string> animations = new();
     private Vector3 _nextPosition;
 
+    [SerializeField] private float movSpeed;
     [SerializeField] private Slider manaBar;
     [SerializeField] private GameObject castBar;
+    private Slider _castSlider;
 
-    private List<Spells> _selectedSpells;
-    private Slider cast;
-
+    private List<SpellInstanceWrapper> _selectedSpells;
     public Stats stats;
 
     public event Action OnStatsPressed;
     public event Action OnSpellUIPressed;
 
+    #region Setup
     private void Awake()
     {
-        _inputs = this.GetComponent<PlayerInput>();
+        _inputs = GetComponent<PlayerInput>();
         _animator = GetComponent<Animator>();
 
-        _rightclick = _inputs.actions.FindAction("RightClick");
-
-        _spells = _inputs.actions.FindAction("Spells");
-
-        _spellsUI = _inputs.actions.FindAction("SpellsUI");
-
-        _statsPanel = _inputs.actions.FindAction("Stats");
+        _rightClickAction = _inputs.actions["RightClick"];
+        _spellsAction = _inputs.actions["Spells"];
+        _spellsUIAction = _inputs.actions["SpellsUI"];
+        _statsPanelAction = _inputs.actions["Stats"];
 
         Cursor.visible = true;
     }
 
     private void Start()
     {
-        cast = castBar.GetComponent<Slider>();
+        _castSlider = castBar.GetComponent<Slider>();
         life = 100;
         stats = Stats.NewStats();
-        
-        StartCoroutine(GetUnlockedSpells());
 
+        StartCoroutine(GetUnlockedSpells());
     }
 
-    public void OnNewSpellEquipped() //llamado mediante UnityEvents de los SpellSlots
+    public void OnNewSpellEquipped()
     {
         StartCoroutine(GetUnlockedSpells());
     }
 
     private IEnumerator GetUnlockedSpells()
     {
-        while (ServiceLocator.instance.GetService<SpellService>(typeof(SpellService)) == null)
+        var spellService = ServiceLocator.instance.GetService<SpellService>(typeof(SpellService));
+        while (spellService == null)
+        {
             yield return null;
+            spellService = ServiceLocator.instance.GetService<SpellService>(typeof(SpellService));
+        }
 
-        _selectedSpells = ServiceLocator.instance.GetService<SpellService>(typeof(SpellService)).GetEquippedSpells();
+        _selectedSpells = spellService.GetEquippedSpells();
     }
 
     private void OnEnable()
     {
         _inputs.ActivateInput();
-        _rightclick.performed += GoToPosition;
-        _spells.performed += ctx =>
-        {
-            string bindingPath = ctx.control.path;
-
-            for (int i = 0; i < 12; i++)
-                if (bindingPath == ("/Keyboard/f" + (i + 1)))
-                    TryCasting(i);
-        };
-        _statsPanel.performed += _ => OnStatsPressed?.Invoke();
-        _spellsUI.performed += _ => OnSpellUIPressed?.Invoke();
+        _rightClickAction.performed += GoToPosition;
+        _spellsAction.performed += HandleSpellCasting;
+        _statsPanelAction.performed += _ => OnStatsPressed?.Invoke();
+        _spellsUIAction.performed += _ => OnSpellUIPressed?.Invoke();
     }
 
     private void OnDisable()
     {
         _inputs.DeactivateInput();
-        _rightclick.performed -= GoToPosition;
-        _spells.performed -= ctx =>
-        {
-            string bindingPath = ctx.control.path;
-
-            for (int i = 0; i < 12; i++)
-                if (bindingPath == ("/Keyboard/f" + (i + 1)))
-                    TryCasting(i);
-        };
-        _statsPanel.performed -= _ => OnStatsPressed?.Invoke();
-        _spellsUI.performed += _ => OnSpellUIPressed?.Invoke();
+        _rightClickAction.performed -= GoToPosition;
+        _spellsAction.performed -= HandleSpellCasting;
+        _statsPanelAction.performed -= _ => OnStatsPressed?.Invoke();
+        _spellsUIAction.performed -= _ => OnSpellUIPressed?.Invoke();
     }
+    #endregion
 
     #region Movement
     private void GoToPosition(InputAction.CallbackContext context)
@@ -105,16 +94,22 @@ public class Player : Character
         if (Physics.Raycast(ray, out RaycastHit hit))
             _nextPosition = hit.point;
     }
+
     private void FixedUpdate()
     {
-        if (transform.position != _nextPosition)
+        MovePlayer();
+    }
+
+    private void MovePlayer()
+    {
+        const float positionThreshold = 0.1f;
+
+        if (Vector3.Distance(transform.position, _nextPosition) > positionThreshold)
         {
             _animator.SetBool(animations[2], true);
             _nextPosition.y = transform.position.y;
-            transform.position = Vector3.MoveTowards(transform.position, _nextPosition, Time.deltaTime * 5f);
-            if ((_nextPosition - transform.position) != Vector3.zero)
-                this.transform.rotation = Quaternion.LookRotation(_nextPosition - transform.position);
-
+            transform.position = Vector3.MoveTowards(transform.position, _nextPosition, Time.deltaTime * this.movSpeed);
+            transform.rotation = Quaternion.LookRotation(_nextPosition - transform.position);
         }
         else
             _animator.SetBool(animations[2], false);
@@ -122,6 +117,19 @@ public class Player : Character
     #endregion
 
     #region SpellCasting
+    private void HandleSpellCasting(InputAction.CallbackContext ctx)
+    {
+        string bindingPath = ctx.control.path;
+        for (int i = 0; i < 12; i++)
+        {
+            if (bindingPath == "/Keyboard/f" + (i + 1))
+            {
+                TryCasting(i);
+                break;
+            }
+        }
+    }
+
     private void TryCasting(int spellNumber)
     {
         if (!HasCastingRequirements(spellNumber))
@@ -133,83 +141,96 @@ public class Player : Character
 
     private bool HasCastingRequirements(int spellNumber)
     {
-        return (_selectedSpells[spellNumber].prefab != null
-            && this.manaBar.value > _selectedSpells[spellNumber].manaPerLevel * _selectedSpells[spellNumber].level
+        return (_selectedSpells[spellNumber] != null
+            && _selectedSpells[spellNumber].spell.prefab != null
+            && manaBar.value > _selectedSpells[spellNumber].spell.manaPerLevel * _selectedSpells[spellNumber].instanceLevel
             && !castBar.activeSelf);
     }
+
     private IEnumerator SpellSelection(int spellNumber)
     {
-
         Ray ray = Camera.main.ScreenPointToRay(Mouse.current.position.ReadValue());
         CursorManager.instance.ChangeCursor(CursorManager.CursorTypes.SpellSelect);
-        
+
         while (CursorManager.instance.GetCurrentCursor() == CursorManager.CursorTypes.SpellSelect)
         {
             if (Input.GetMouseButtonDown(0))
             {
                 ray = Camera.main.ScreenPointToRay(Mouse.current.position.ReadValue());
                 CursorManager.instance.ChangeCursor(CursorManager.CursorTypes.Basic);
+                break;
             }
-            else
-                yield return null;
+            yield return null;
         }
 
         if (Physics.Raycast(ray, out RaycastHit hit))
         {
-            float clickRadius = 2f;
+            const float clickRadius = 2f;
             Collider[] hitColliders = Physics.OverlapSphere(hit.point, clickRadius, LayerMask.GetMask("Enemy"));
+            Collider closestEnemy = GetClosestEnemy(hit.point, hitColliders);
 
-            if (hitColliders.Length > 0)
+            if (closestEnemy != null)
             {
-                Collider closestEnemy = hitColliders[0];
-                float closestDistance = Vector3.Distance(hit.point, closestEnemy.transform.position);
-
-                foreach (Collider hitCollider in hitColliders)
-                {
-                    float distance = Vector3.Distance(hit.point, hitCollider.transform.position);
-                    if (distance < closestDistance)
-                    {
-                        closestEnemy = hitCollider;
-                        closestDistance = distance;
-                    }
-                }
-
+                _nextPosition = this.transform.position;
                 yield return StartCoroutine(CastSpell(closestEnemy.gameObject, spellNumber));
             }
         }
+    }
+
+    private Collider GetClosestEnemy(Vector3 hitPoint, Collider[] hitColliders)
+    {
+        Collider closestEnemy = null;
+        float closestDistance = float.MaxValue;
+
+        foreach (Collider hitCollider in hitColliders)
+        {
+            float distance = Vector3.Distance(hitPoint, hitCollider.transform.position);
+            if (distance < closestDistance)
+            {
+                closestEnemy = hitCollider;
+                closestDistance = distance;
+            }
+        }
+
+        return closestEnemy;
     }
 
     private IEnumerator CastSpell(GameObject enemy, int spellNumber)
     {
         castBar.SetActive(true);
         _animator.SetBool(animations[0], true);
+        float startingLife = life;
 
-        while (cast.value < 100 && this.transform.position == _nextPosition)
+        while (_castSlider.value < 100 && Vector3.Distance(transform.position, _nextPosition) < 0.1f && startingLife <= life)
         {
-            cast.value += this.stats.dexterity / (_selectedSpells[spellNumber].level * _selectedSpells[spellNumber].castDelayPerLevel) * Time.deltaTime * 15;
-            this.transform.rotation = Quaternion.LookRotation(enemy.transform.position - transform.position);
+            _castSlider.value += stats.dexterity / (_selectedSpells[spellNumber].instanceLevel * _selectedSpells[spellNumber].spell.castDelayPerLevel) * Time.deltaTime * 15;
+            transform.rotation = Quaternion.LookRotation(enemy.transform.position - transform.position);
             yield return null;
         }
 
         _animator.SetBool(animations[0], false);
-        cast.value = 0;
+        _castSlider.value = 0;
         castBar.SetActive(false);
 
-        if (this.transform.position != _nextPosition)
+        if (Vector3.Distance(transform.position, _nextPosition) > 0.1f || startingLife > life)
             yield break;
-        
+
         _animator.SetTrigger(animations[1]);
-        SpellController.Cast(_selectedSpells[spellNumber], this.transform.position, enemy.transform, this.stats.intelligence);
-        
-        this.manaBar.value -= _selectedSpells[spellNumber].manaPerLevel * _selectedSpells[spellNumber].level;
+        _selectedSpells[spellNumber].spell.level = _selectedSpells[spellNumber].instanceLevel;
+        SpellController.Cast(_selectedSpells[spellNumber].spell, transform.position, enemy.transform, stats.intelligence);
+
+        manaBar.value -= _selectedSpells[spellNumber].spell.manaPerLevel * _selectedSpells[spellNumber].instanceLevel;
     }
     #endregion
 
     private void Update()
     {
-        if (this.manaBar.value < 100)
-            this.manaBar.value += 0.02f * this.stats.intelligence;
+        RegenerateMana();
     }
 
-    
+    private void RegenerateMana()
+    {
+        if (manaBar.value < 100)
+            manaBar.value += 0.02f * stats.intelligence;
+    }
 }

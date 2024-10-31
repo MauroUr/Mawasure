@@ -26,7 +26,7 @@ public class SpellController : MonoBehaviour
         spell.conditionalData.strategy.Cast(spell, playerPos, target, playerInt);
     }
 
-    public SpellController Instantiation(Spells spell, Vector3 playerPos)
+    public static SpellController Instantiation(Spells spell, Vector3 playerPos)
     {
         return Instantiate(spell.prefab, playerPos + spell.offset, Quaternion.identity).GetComponent<SpellController>();
     }

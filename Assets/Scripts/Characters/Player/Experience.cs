@@ -30,9 +30,14 @@ public class Experience : MonoBehaviour
     {
         _experience += experience;
         int prevLevel = _level;
-        _level = Mathf.FloorToInt(_experience / 1000);
+        int leveled = Mathf.FloorToInt(_experience / 1000*_level) ;
 
-        if(prevLevel < _level)
-            OnLevelUp.Invoke();
+        if (leveled >= 1)
+        {
+            _level = leveled;
+            for (int i = leveled; i > prevLevel; i--)
+                OnLevelUp.Invoke();
+        }
+
     }
 }

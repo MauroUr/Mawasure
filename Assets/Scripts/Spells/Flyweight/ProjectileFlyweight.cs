@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ProjectileFlyweight : MonoBehaviour
+public class ProjectileFlyweight
 {
     public Material material;
     public Vector3 size;

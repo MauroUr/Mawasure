@@ -1031,6 +1031,11 @@ PrefabInstance:
       objectReference: {fileID: 1330207802}
     - target: {fileID: 2332804742941542217, guid: e87bae9b1bed776479afbf4beb2acac3,
         type: 3}
+      propertyPath: movSpeed
+      value: 3.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 2332804742941542217, guid: e87bae9b1bed776479afbf4beb2acac3,
+        type: 3}
       propertyPath: healthBar
       value: 
       objectReference: {fileID: 692495257}
@@ -18731,13 +18736,38 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 71739306659890757, guid: 7737d49a9df7ecb4a90dd7b79281f764,
         type: 3}
+      propertyPath: damage
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 71739306659890757, guid: 7737d49a9df7ecb4a90dd7b79281f764,
+        type: 3}
+      propertyPath: radius
+      value: 20
+      objectReference: {fileID: 0}
+    - target: {fileID: 71739306659890757, guid: 7737d49a9df7ecb4a90dd7b79281f764,
+        type: 3}
       propertyPath: _radius
       value: 15
       objectReference: {fileID: 0}
     - target: {fileID: 71739306659890757, guid: 7737d49a9df7ecb4a90dd7b79281f764,
         type: 3}
+      propertyPath: animator
+      value: 
+      objectReference: {fileID: 1454589030}
+    - target: {fileID: 71739306659890757, guid: 7737d49a9df7ecb4a90dd7b79281f764,
+        type: 3}
+      propertyPath: movSpeed
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 71739306659890757, guid: 7737d49a9df7ecb4a90dd7b79281f764,
+        type: 3}
       propertyPath: experience
       value: 1000
+      objectReference: {fileID: 0}
+    - target: {fileID: 71739306659890757, guid: 7737d49a9df7ecb4a90dd7b79281f764,
+        type: 3}
+      propertyPath: attackDelay
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 71739306659890757, guid: 7737d49a9df7ecb4a90dd7b79281f764,
         type: 3}
@@ -18788,6 +18818,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_AnchorMax.y
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5386170693205854143, guid: 7737d49a9df7ecb4a90dd7b79281f764,
+        type: 3}
+      propertyPath: m_Speed
+      value: 2
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -27237,6 +27272,12 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 51507022}
   m_PrefabAsset: {fileID: 0}
+--- !u!95 &1454589030 stripped
+Animator:
+  m_CorrespondingSourceObject: {fileID: 95457531584545886, guid: 7737d49a9df7ecb4a90dd7b79281f764,
+    type: 3}
+  m_PrefabInstance: {fileID: 1028220688}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1455055007
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -33571,6 +33612,12 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 8460917321318470221, guid: 3964c23ae9838e84889ea6d65b5861aa,
     type: 3}
   m_PrefabInstance: {fileID: 1195516835}
+  m_PrefabAsset: {fileID: 0}
+--- !u!95 &1794929430 stripped
+Animator:
+  m_CorrespondingSourceObject: {fileID: 95706204029656638, guid: 0bc564ad0f3b3a8438c35ab93073a82f,
+    type: 3}
+  m_PrefabInstance: {fileID: 6824798732030024275}
   m_PrefabAsset: {fileID: 0}
 --- !u!4 &1796604120 stripped
 Transform:
@@ -40217,6 +40264,21 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 337607925295672957, guid: 0bc564ad0f3b3a8438c35ab93073a82f,
+        type: 3}
+      propertyPath: m_Speed
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 4212975820260665166, guid: 0bc564ad0f3b3a8438c35ab93073a82f,
+        type: 3}
+      propertyPath: damage
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 4212975820260665166, guid: 0bc564ad0f3b3a8438c35ab93073a82f,
+        type: 3}
+      propertyPath: radius
+      value: 10
+      objectReference: {fileID: 0}
     - target: {fileID: 4212975820260665166, guid: 0bc564ad0f3b3a8438c35ab93073a82f,
         type: 3}
       propertyPath: _radius
@@ -40224,8 +40286,23 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4212975820260665166, guid: 0bc564ad0f3b3a8438c35ab93073a82f,
         type: 3}
+      propertyPath: animator
+      value: 
+      objectReference: {fileID: 1794929430}
+    - target: {fileID: 4212975820260665166, guid: 0bc564ad0f3b3a8438c35ab93073a82f,
+        type: 3}
+      propertyPath: movSpeed
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 4212975820260665166, guid: 0bc564ad0f3b3a8438c35ab93073a82f,
+        type: 3}
       propertyPath: experience
       value: 1500
+      objectReference: {fileID: 0}
+    - target: {fileID: 4212975820260665166, guid: 0bc564ad0f3b3a8438c35ab93073a82f,
+        type: 3}
+      propertyPath: attackDelay
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 4212975820260665166, guid: 0bc564ad0f3b3a8438c35ab93073a82f,
         type: 3}
