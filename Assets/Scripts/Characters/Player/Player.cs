@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.Serialization;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
@@ -42,10 +43,10 @@ public class Player : Character
         Cursor.visible = true;
     }
 
-    private void Start()
+    private new void Start()
     {
+        base.Start();
         _castSlider = castBar.GetComponent<Slider>();
-        life = 100;
         stats = Stats.NewStats();
 
         StartCoroutine(GetUnlockedSpells());
@@ -201,10 +202,12 @@ public class Player : Character
         _animator.SetBool(animations[0], true);
         float startingLife = life;
 
-        while (_castSlider.value < 100 && Vector3.Distance(transform.position, _nextPosition) < 0.1f && startingLife <= life)
+        while (_castSlider.value < 100 && Vector3.Distance(transform.position, _nextPosition) < 0.1f && startingLife <= life && enemy != null)
         {
             _castSlider.value += stats.dexterity / (_selectedSpells[spellNumber].instanceLevel * _selectedSpells[spellNumber].spell.castDelayPerLevel) * Time.deltaTime * 15;
-            transform.rotation = Quaternion.LookRotation(enemy.transform.position - transform.position);
+            Quaternion nextRotation = Quaternion.LookRotation(enemy.transform.position - transform.position);
+            nextRotation.x = transform.rotation.x;
+            this.transform.rotation = nextRotation;
             yield return null;
         }
 
@@ -212,7 +215,7 @@ public class Player : Character
         _castSlider.value = 0;
         castBar.SetActive(false);
 
-        if (Vector3.Distance(transform.position, _nextPosition) > 0.1f || startingLife > life)
+        if (Vector3.Distance(transform.position, _nextPosition) > 0.1f || startingLife > life || enemy == null)
             yield break;
 
         _animator.SetTrigger(animations[1]);

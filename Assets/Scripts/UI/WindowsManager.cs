@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using static UnityEngine.CullingGroup;
 
 public class WindowsManager : MonoBehaviour
 {
@@ -41,7 +42,7 @@ public class WindowsManager : MonoBehaviour
     private void AssignPoints()
     {
         spellPointsIncreased += 2;
-        statPointsIncreased += 10;
+        statPointsIncreased += 9;
     }
 
     public void ToggleStatsPanel()
@@ -70,7 +71,6 @@ public class WindowsManager : MonoBehaviour
                 maxSpellsLevel.Add(item.Key, item.Key.text);
         }
     }
-
 
     private void CancelStatChanges()
     {
@@ -135,25 +135,37 @@ public class WindowsManager : MonoBehaviour
 
     public void SpellIncrease(TextMeshProUGUI spellChanged)
     {
-        if (int.Parse(spellChanged.text) == 10 || int.Parse(spellPointsToAssign.text) <= 0) return;
+        int currentLevel = int.Parse(spellChanged.text);
+        int maxLevel = maxSpellsLevel.ContainsKey(spellChanged) ? int.Parse(maxSpellsLevel[spellChanged]) : 0;
 
-        TrackAndModifyStat(spellsLevelBeforeApply, spellChanged, 1);
-        spellPointsIncreased++; 
+        if (currentLevel < maxLevel)
+            spellChanged.text = (currentLevel + 1).ToString();
+        else if (currentLevel < 10 && int.Parse(spellPointsToAssign.text) > 0)
+        {
+            TrackAndModifyStat(spellsLevelBeforeApply, spellChanged, 1);
+            spellPointsIncreased++;
+        }
     }
 
     public void SpellDecrease(TextMeshProUGUI spellChanged)
     {
-        if (spellChanged.text == "0" || (maxSpellsLevel.ContainsKey(spellChanged) && int.Parse(spellChanged.text) > int.Parse(maxSpellsLevel[spellChanged]))) return;
+        int currentLevel = int.Parse(spellChanged.text);
+        int maxLevel = maxSpellsLevel.ContainsKey(spellChanged) ? int.Parse(maxSpellsLevel[spellChanged]) : 0;
+
+        if (currentLevel <= 1 || (maxSpellsLevel.ContainsKey(spellChanged) && currentLevel > maxLevel) || spellsLevelBeforeApply.Count > 0) return;
+
+        if (currentLevel <= maxLevel)
+            spellChanged.text = (currentLevel - 1).ToString();
+        else if (currentLevel < 10 && int.Parse(spellPointsToAssign.text) > 0)
+        {
+            TrackAndModifyStat(spellsLevelBeforeApply, spellChanged, -1);
+            spellPointsIncreased--;
+        }
         
-        TrackAndModifyStat(spellsLevelBeforeApply, spellChanged, -1);
-
-        spellPointsIncreased--;
     }
-
     public void StatIncrease(TextMeshProUGUI statChanged)
     {
-        if (statPointsToAssign.text == "0") return; 
-
+        if (statPointsToAssign.text == "0") return;
         TrackAndModifyStat(statsBeforeApply, statChanged, 1);
         statPointsIncreased++;
     }

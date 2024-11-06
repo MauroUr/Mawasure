@@ -55,10 +55,16 @@ public class SpellController : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
+        if (!other.gameObject.TryGetComponent<Character>(out Character enemy))
+        {
+            Destroy(this.gameObject);
+            return;
+        }
+
         if (_currentSpell.conditionalData.strategy is SingleStrategy)
-            other.gameObject.GetComponent<Character>().TakeDamage(_currentSpell.dmgPerLevel * _currentSpell.level * _playerInt);
+            enemy.TakeDamage(_currentSpell.dmgPerLevel * _currentSpell.level * _playerInt);
         else
-            other.gameObject.GetComponent<Character>().TakeDamage(_currentSpell.dmgPerLevel);
+            enemy.TakeDamage(_currentSpell.dmgPerLevel);
         Destroy(this.gameObject);
     }
 }

@@ -10,7 +10,7 @@ public class Enemy : Character
     [SerializeField] private float radius;
     private float _attackRadius;
     [SerializeField] private float damage;
-    [SerializeField] private Animator animator;
+    [SerializeField] protected Animator animator;
     [SerializeField] private float attackDelay;
     [SerializeField] private float experience;
     [SerializeField] private bool canCast;
@@ -23,16 +23,16 @@ public class Enemy : Character
     private Timer angerTimer;
     private bool isAngry = false;
     
-    private void Start()
+    private new void Start()
     {
-        this.life = 100;
+        base.Start();
         _agent = GetComponent<NavMeshAgent>();
         _attackRadius = _agent.stoppingDistance;
         angerTimer = new Timer(5000); 
         angerTimer.Elapsed += OnAngerTimerElapsed;
         angerTimer.AutoReset = false;
     }
-    private void LateUpdate()
+    protected void LateUpdate()
     {
         healthBar.gameObject.transform.rotation = Camera.main.transform.rotation;
 

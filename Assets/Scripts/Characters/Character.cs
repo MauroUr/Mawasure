@@ -5,9 +5,14 @@ using UnityEngine.UI;
 
 public abstract class Character : MonoBehaviour
 {
-    protected float life;
+    [SerializeField] protected float life;
     [SerializeField] protected Slider healthBar;
 
+    protected void Start()
+    {
+        healthBar.maxValue = life;
+        healthBar.value = life;
+    }
     public virtual void TakeDamage(float damage)
     {
         this.life -= damage;

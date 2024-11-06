@@ -23,7 +23,7 @@ public class Experience : MonoBehaviour
         }
 
         _experience = 0;
-        _level = Mathf.FloorToInt(0 / 1000);
+        _level = Mathf.FloorToInt(1000 / 1000);
     }
 
     public void AddXP(float experience)

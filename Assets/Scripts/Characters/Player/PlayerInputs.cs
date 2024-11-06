@@ -71,6 +71,24 @@ public partial class @PlayerInputs: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""MouseWheelPress"",
+                    ""type"": ""PassThrough"",
+                    ""id"": ""6e402a8a-84a4-4f25-a3bd-44169afc2e74"",
+                    ""expectedControlType"": ""Delta"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Look"",
+                    ""type"": ""PassThrough"",
+                    ""id"": ""2a1cf416-4626-4868-8293-f2336b9fdc4b"",
+                    ""expectedControlType"": ""Delta"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -315,6 +333,28 @@ public partial class @PlayerInputs: IInputActionCollection2, IDisposable
                     ""action"": ""Equipment"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""626cf6d9-00ff-42ba-b3da-2d7e60d1843f"",
+                    ""path"": ""<Mouse>/middleButton"",
+                    ""interactions"": ""Press(behavior=2)"",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""MouseWheelPress"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""4c676c6f-4bcd-4a08-bd7f-359aeeb14beb"",
+                    ""path"": ""<Mouse>/delta"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Look"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -328,6 +368,8 @@ public partial class @PlayerInputs: IInputActionCollection2, IDisposable
         m_Gameplay_Stats = m_Gameplay.FindAction("Stats", throwIfNotFound: true);
         m_Gameplay_SpellsUI = m_Gameplay.FindAction("SpellsUI", throwIfNotFound: true);
         m_Gameplay_Equipment = m_Gameplay.FindAction("Equipment", throwIfNotFound: true);
+        m_Gameplay_MouseWheelPress = m_Gameplay.FindAction("MouseWheelPress", throwIfNotFound: true);
+        m_Gameplay_Look = m_Gameplay.FindAction("Look", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -394,6 +436,8 @@ public partial class @PlayerInputs: IInputActionCollection2, IDisposable
     private readonly InputAction m_Gameplay_Stats;
     private readonly InputAction m_Gameplay_SpellsUI;
     private readonly InputAction m_Gameplay_Equipment;
+    private readonly InputAction m_Gameplay_MouseWheelPress;
+    private readonly InputAction m_Gameplay_Look;
     public struct GameplayActions
     {
         private @PlayerInputs m_Wrapper;
@@ -403,6 +447,8 @@ public partial class @PlayerInputs: IInputActionCollection2, IDisposable
         public InputAction @Stats => m_Wrapper.m_Gameplay_Stats;
         public InputAction @SpellsUI => m_Wrapper.m_Gameplay_SpellsUI;
         public InputAction @Equipment => m_Wrapper.m_Gameplay_Equipment;
+        public InputAction @MouseWheelPress => m_Wrapper.m_Gameplay_MouseWheelPress;
+        public InputAction @Look => m_Wrapper.m_Gameplay_Look;
         public InputActionMap Get() { return m_Wrapper.m_Gameplay; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -427,6 +473,12 @@ public partial class @PlayerInputs: IInputActionCollection2, IDisposable
             @Equipment.started += instance.OnEquipment;
             @Equipment.performed += instance.OnEquipment;
             @Equipment.canceled += instance.OnEquipment;
+            @MouseWheelPress.started += instance.OnMouseWheelPress;
+            @MouseWheelPress.performed += instance.OnMouseWheelPress;
+            @MouseWheelPress.canceled += instance.OnMouseWheelPress;
+            @Look.started += instance.OnLook;
+            @Look.performed += instance.OnLook;
+            @Look.canceled += instance.OnLook;
         }
 
         private void UnregisterCallbacks(IGameplayActions instance)
@@ -446,6 +498,12 @@ public partial class @PlayerInputs: IInputActionCollection2, IDisposable
             @Equipment.started -= instance.OnEquipment;
             @Equipment.performed -= instance.OnEquipment;
             @Equipment.canceled -= instance.OnEquipment;
+            @MouseWheelPress.started -= instance.OnMouseWheelPress;
+            @MouseWheelPress.performed -= instance.OnMouseWheelPress;
+            @MouseWheelPress.canceled -= instance.OnMouseWheelPress;
+            @Look.started -= instance.OnLook;
+            @Look.performed -= instance.OnLook;
+            @Look.canceled -= instance.OnLook;
         }
 
         public void RemoveCallbacks(IGameplayActions instance)
@@ -470,5 +528,7 @@ public partial class @PlayerInputs: IInputActionCollection2, IDisposable
         void OnStats(InputAction.CallbackContext context);
         void OnSpellsUI(InputAction.CallbackContext context);
         void OnEquipment(InputAction.CallbackContext context);
+        void OnMouseWheelPress(InputAction.CallbackContext context);
+        void OnLook(InputAction.CallbackContext context);
     }
 }
