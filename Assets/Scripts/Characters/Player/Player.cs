@@ -1,7 +1,6 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Runtime.Serialization;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
@@ -13,6 +12,14 @@ public class Player : Character
     private InputAction _spellsAction;
     private InputAction _spellsUIAction;
     private InputAction _statsPanelAction;
+    private InputAction _lookAction;
+    private InputAction _mouseWheelPressAction;
+    
+    private bool _isRotating = false;
+    [SerializeField] private float rotationSpeed;
+    [SerializeField] private Transform cameraFollow;
+    [SerializeField] private Transform rotationTarget;
+
     private Animator _animator;
 
     [SerializeField] private List<string> animations = new();
@@ -39,6 +46,8 @@ public class Player : Character
         _spellsAction = _inputs.actions["Spells"];
         _spellsUIAction = _inputs.actions["SpellsUI"];
         _statsPanelAction = _inputs.actions["Stats"];
+        _lookAction = _inputs.actions["Look"];
+        _mouseWheelPressAction = _inputs.actions["MouseWheelPress"];
 
         Cursor.visible = true;
     }
@@ -48,7 +57,7 @@ public class Player : Character
         base.Start();
         _castSlider = castBar.GetComponent<Slider>();
         stats = Stats.NewStats();
-
+        _nextPosition = transform.position;
         StartCoroutine(GetUnlockedSpells());
     }
 
@@ -76,6 +85,8 @@ public class Player : Character
         _spellsAction.performed += HandleSpellCasting;
         _statsPanelAction.performed += _ => OnStatsPressed?.Invoke();
         _spellsUIAction.performed += _ => OnSpellUIPressed?.Invoke();
+        _mouseWheelPressAction.performed += _ => _isRotating = true;
+        _mouseWheelPressAction.canceled += _ => _isRotating = false;
     }
 
     private void OnDisable()
@@ -85,6 +96,8 @@ public class Player : Character
         _spellsAction.performed -= HandleSpellCasting;
         _statsPanelAction.performed -= _ => OnStatsPressed?.Invoke();
         _spellsUIAction.performed -= _ => OnSpellUIPressed?.Invoke();
+        _mouseWheelPressAction.performed -= _ => _isRotating = true;
+        _mouseWheelPressAction.canceled -= _ => _isRotating = false;
     }
     #endregion
 
@@ -110,7 +123,7 @@ public class Player : Character
             _animator.SetBool(animations[2], true);
             _nextPosition.y = transform.position.y;
             transform.position = Vector3.MoveTowards(transform.position, _nextPosition, Time.deltaTime * this.movSpeed);
-            transform.rotation = Quaternion.LookRotation(_nextPosition - transform.position);
+            rotationTarget.localRotation = Quaternion.LookRotation(_nextPosition - transform.position);
         }
         else
             _animator.SetBool(animations[2], false);
@@ -207,7 +220,7 @@ public class Player : Character
             _castSlider.value += stats.dexterity / (_selectedSpells[spellNumber].instanceLevel * _selectedSpells[spellNumber].spell.castDelayPerLevel) * Time.deltaTime * 15;
             Quaternion nextRotation = Quaternion.LookRotation(enemy.transform.position - transform.position);
             nextRotation.x = transform.rotation.x;
-            this.transform.rotation = nextRotation;
+            rotationTarget.localRotation = nextRotation;
             yield return null;
         }
 
@@ -229,6 +242,14 @@ public class Player : Character
     private void Update()
     {
         RegenerateMana();
+
+        if (_isRotating && cameraFollow != null)
+        {
+            Vector2 mouseDelta = _lookAction.ReadValue<Vector2>();
+
+            float rotationX = mouseDelta.x;
+            cameraFollow.Rotate(0, rotationX, 0, Space.World);
+        }
     }
 
     private void RegenerateMana()

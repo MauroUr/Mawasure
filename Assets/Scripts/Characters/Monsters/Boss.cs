@@ -17,7 +17,8 @@ public class Boss : Enemy
 
     public void AwakeBoss()
     {
-        _isAwake = true;
         this.animator.SetBool("IsAwake", true);
     }
+
+    protected void SetAwake() { _isAwake = true; }
 }
