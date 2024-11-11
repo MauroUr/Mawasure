@@ -19674,21 +19674,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 71739306659890757, guid: 7737d49a9df7ecb4a90dd7b79281f764,
-        type: 3}
-      propertyPath: animations.Array.size
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 71739306659890757, guid: 7737d49a9df7ecb4a90dd7b79281f764,
-        type: 3}
-      propertyPath: animations.Array.data[0]
-      value: Run
-      objectReference: {fileID: 0}
-    - target: {fileID: 71739306659890757, guid: 7737d49a9df7ecb4a90dd7b79281f764,
-        type: 3}
-      propertyPath: animations.Array.data[1]
-      value: Attack
-      objectReference: {fileID: 0}
     - target: {fileID: 615655222764566676, guid: 7737d49a9df7ecb4a90dd7b79281f764,
         type: 3}
       propertyPath: m_AnchorMax.x
@@ -42395,21 +42380,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 4212975820260665166, guid: 0bc564ad0f3b3a8438c35ab93073a82f,
-        type: 3}
-      propertyPath: animations.Array.size
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 4212975820260665166, guid: 0bc564ad0f3b3a8438c35ab93073a82f,
-        type: 3}
-      propertyPath: animations.Array.data[0]
-      value: Run
-      objectReference: {fileID: 0}
-    - target: {fileID: 4212975820260665166, guid: 0bc564ad0f3b3a8438c35ab93073a82f,
-        type: 3}
-      propertyPath: animations.Array.data[1]
-      value: Attack
-      objectReference: {fileID: 0}
     - target: {fileID: 5815313017252110900, guid: 0bc564ad0f3b3a8438c35ab93073a82f,
         type: 3}
       propertyPath: m_AnchorMax.x
@@ -42635,37 +42605,6 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1519630559204994937, guid: fe80f3951d745fb43846e89b934353a4,
-        type: 3}
-      propertyPath: spell
-      value: 
-      objectReference: {fileID: 11400000, guid: 5ae125fd6a1b0be46a8f3e6279cf18d6,
-        type: 2}
-    - target: {fileID: 1519630559204994937, guid: fe80f3951d745fb43846e89b934353a4,
-        type: 3}
-      propertyPath: animations.Array.size
-      value: 4
-      objectReference: {fileID: 0}
-    - target: {fileID: 1519630559204994937, guid: fe80f3951d745fb43846e89b934353a4,
-        type: 3}
-      propertyPath: animations.Array.data[0]
-      value: Run
-      objectReference: {fileID: 0}
-    - target: {fileID: 1519630559204994937, guid: fe80f3951d745fb43846e89b934353a4,
-        type: 3}
-      propertyPath: animations.Array.data[1]
-      value: Attack
-      objectReference: {fileID: 0}
-    - target: {fileID: 1519630559204994937, guid: fe80f3951d745fb43846e89b934353a4,
-        type: 3}
-      propertyPath: animations.Array.data[2]
-      value: Cast
-      objectReference: {fileID: 0}
-    - target: {fileID: 1519630559204994937, guid: fe80f3951d745fb43846e89b934353a4,
-        type: 3}
-      propertyPath: animations.Array.data[3]
-      value: Casted
       objectReference: {fileID: 0}
     - target: {fileID: 3315125442743515812, guid: fe80f3951d745fb43846e89b934353a4,
         type: 3}
