@@ -1,12 +1,12 @@
-using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
-using System.Timers;
 using UnityEngine;
 using UnityEngine.AI;
 
 public class Enemy : Character
 {
+    [SerializeField] protected List<string> animations = new();
     [SerializeField] private float radius;
     protected float _attackRadius;
     [SerializeField] private float damage;
@@ -18,19 +18,16 @@ public class Enemy : Character
     private NavMeshAgent _agent;
     private Collider _playerFound;
     private States _state;
-    private bool isIdleAfterRoam = false;
+    private bool _isIdleAfterRoam = false;
     
-    private Timer angerTimer;
-    private bool isAngry = false;
+    private bool _isAngry = false;
     
     private new void Start()
     {
         base.Start();
         _agent = GetComponent<NavMeshAgent>();
         _attackRadius = _agent.stoppingDistance;
-        angerTimer = new Timer(5000); 
-        angerTimer.Elapsed += OnAngerTimerElapsed;
-        angerTimer.AutoReset = false;
+        StartCoroutine(LookForPlayer());
     }
     protected void LateUpdate()
     {
@@ -48,7 +45,7 @@ public class Enemy : Character
 
         if (s == States.IDLE && _state != States.IDLE)
         {
-            isIdleAfterRoam = false;
+            _isIdleAfterRoam = false;
             StartCoroutine(LookForPlayer());
         }
 
@@ -60,45 +57,51 @@ public class Enemy : Character
         switch (_state)
         {
             case States.IDLE:
-                StartCoroutine(LookForPlayer());
-                if (!_agent.pathPending)
-                    animator.SetBool("Run", false);
-                break;
-            case States.ATTACK:
-                if (_playerFound == null) break;
-
-                _lastAttack += Time.deltaTime;
-
-                float distance = Vector3.Distance(_playerFound.transform.position, this.transform.position);
-
-                if(distance > radius && !isAngry)
-                {
-                    ChangeState(States.IDLE);
-                    break;
-                }
-
-                if (distance < _attackRadius && _lastAttack > attackDelay)
-                {
-                    animator.SetTrigger("Attack");
-                    _lastAttack = 0;
-                    animator.SetBool("Run", false);
-                    ChangeState(States.ATTACK);
-                }
-                else if(distance > _attackRadius) 
-                {
-                    animator.SetBool("Run", true);
-                    _agent.SetDestination(_playerFound.gameObject.transform.position);
-                }
                 
                 break;
+            case States.ATTACK:
+                HandleAttackState();
+                break;
+            
         }
     }
 
+    protected virtual IEnumerator CastSpell(GameObject enemy)
+    {
+        throw new System.NotImplementedException("Cast method must be implemented in the subclass.");
+    }
+
+    private void HandleAttackState()
+    {
+        if (_playerFound == null) return;
+
+        _lastAttack += Time.deltaTime;
+
+        float distance = Vector3.Distance(_playerFound.transform.position, this.transform.position);
+
+        if (distance > radius && !_isAngry)
+        {
+            ChangeState(States.IDLE);
+            return;
+        }
+
+        if (distance < _attackRadius && _lastAttack > attackDelay)
+        {
+            animator.SetTrigger(animations[1]);
+            _lastAttack = 0;
+            animator.SetBool(animations[0], false);
+        }
+        else if (distance > _attackRadius)
+        {
+            animator.SetBool(animations[0], true);
+            _agent.SetDestination(_playerFound.gameObject.transform.position);
+        }
+    }
     public void MakeDamage()
     {
         _playerFound.gameObject.GetComponentInParent<Character>().TakeDamage(damage);
     }
-    private IEnumerator LookForPlayer()
+    protected IEnumerator LookForPlayer()
     {
         while (true)
         {
@@ -112,14 +115,14 @@ public class Enemy : Character
                     _playerFound = null;
                 else if (_state != States.ATTACK)
                 {
-                    if (UnityEngine.Random.Range(0, 1) == 0 && canCast)
+                    if (Random.Range(0, 1) == 0 && canCast)
                         ChangeState(States.CAST);
                     else
                         ChangeState(States.ATTACK);
                     StopAllCoroutines();
                 }
             }
-            else if (!isIdleAfterRoam && UnityEngine.Random.Range(0, 5) == 0 && !_agent.pathPending)
+            else if (!_isIdleAfterRoam && Random.Range(0, 5) == 0 && !_agent.pathPending)
                 StartCoroutine(Roam());
 
             yield return new WaitForSeconds(0.3f);
@@ -128,7 +131,7 @@ public class Enemy : Character
 
     private IEnumerator Roam()
     {
-        animator.SetBool("Run", true);
+        animator.SetBool(animations[0], true);
 
         float minRoamDistance = radius / 2; 
         float maxRoamDistance = radius;
@@ -139,14 +142,14 @@ public class Enemy : Character
         if (NavMesh.SamplePosition(roamPosition, out NavMeshHit hit, maxRoamDistance, NavMesh.AllAreas))
         {
             _agent.SetDestination(hit.position);
-            isIdleAfterRoam = true;
+            _isIdleAfterRoam = true;
 
             yield return new WaitUntil(() => !_agent.pathPending && _agent.remainingDistance <= _agent.stoppingDistance);
 
-            animator.SetBool("Run", false);
+            animator.SetBool(animations[0], false);
             yield return new WaitForSeconds(5f);
 
-            isIdleAfterRoam = false;
+            _isIdleAfterRoam = false;
         }
 
         yield break;
@@ -156,26 +159,25 @@ public class Enemy : Character
     {
         base.TakeDamage(damage);
 
-        _playerFound = Physics.OverlapSphere(transform.position, 100, 1 << 3).FirstOrDefault();
-        StopAllCoroutines();
-        StartAngerTimer(); 
-
         if (life <= 0)
         {
             Experience.Instance.AddXP(experience);
-            Destroy(this.gameObject);
+            Destroy(gameObject);
+        }
+        else
+        {
+            ChangeState(States.ATTACK);
+            StopCoroutine(nameof(HandleAngerMode));
+            StartCoroutine(HandleAngerMode());
         }
     }
-    private void StartAngerTimer()
+    private IEnumerator HandleAngerMode()
     {
-        ChangeState(States.ATTACK);
-        isAngry = true;
-        angerTimer.Start();
+        _isAngry = true;
+        yield return new WaitForSeconds(5f);
+        _isAngry = false;
     }
-    private void OnAngerTimerElapsed(object sender, ElapsedEventArgs e)
-    {
-        isAngry = false;
-    }
+
     public enum States
     {
         IDLE,

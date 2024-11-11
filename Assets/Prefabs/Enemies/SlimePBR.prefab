@@ -561,6 +561,9 @@ MonoBehaviour:
   healthBar: {fileID: 857484008461405151}
   castCircleTarget: {fileID: 9180549375462594490}
   castCircle: {fileID: 0}
+  animations:
+  - Run
+  - Attack
   radius: 10
   damage: 10
   animator: {fileID: 95457531584545886}
