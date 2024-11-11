@@ -4,8 +4,8 @@ using UnityEngine;
 public class SpellController : MonoBehaviour
 {
     public Spells _currentSpell;
-    public Transform _target;
-    public int _playerInt;
+    [HideInInspector] public Transform _target;
+    [HideInInspector] public int _playerInt;
 
     private void Update()
     {

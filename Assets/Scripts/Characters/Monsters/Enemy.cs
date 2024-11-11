@@ -8,7 +8,7 @@ using UnityEngine.AI;
 public class Enemy : Character
 {
     [SerializeField] private float radius;
-    private float _attackRadius;
+    protected float _attackRadius;
     [SerializeField] private float damage;
     [SerializeField] protected Animator animator;
     [SerializeField] private float attackDelay;
@@ -41,6 +41,17 @@ public class Enemy : Character
 
     private void ChangeState(States s)
     {
+        if (_state == States.IDLE && s == States.ATTACK)
+            radius *= 2;
+        else if (_state == States.ATTACK && s == States.IDLE)
+            radius /= 2;
+
+        if (s == States.IDLE && _state != States.IDLE)
+        {
+            isIdleAfterRoam = false;
+            StartCoroutine(LookForPlayer());
+        }
+
         _state = s;
     }
 
@@ -73,7 +84,7 @@ public class Enemy : Character
                     animator.SetBool("Run", false);
                     ChangeState(States.ATTACK);
                 }
-                else
+                else if(distance > _attackRadius) 
                 {
                     animator.SetBool("Run", true);
                     _agent.SetDestination(_playerFound.gameObject.transform.position);
@@ -96,10 +107,9 @@ public class Enemy : Character
             if (_playerFound != null)
             {
                 float distance = Vector3.Distance(_playerFound.transform.position, transform.position);
+                
                 if (distance > radius)
-                {
                     _playerFound = null;
-                }
                 else if (_state != States.ATTACK)
                 {
                     if (UnityEngine.Random.Range(0, 1) == 0 && canCast)

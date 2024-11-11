@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Fire Bolt
   m_EditorClassIdentifier: 
   id: 0
-  level: 6
+  level: 2
   dmgPerLevel: 10
   manaPerLevel: 5
   castDelayPerLevel: 1
@@ -22,7 +22,7 @@ MonoBehaviour:
   offset: {x: 5, y: 10, z: 0}
   conditionalData:
     strategy:
-      rid: 503757346850996257
+      rid: 7441198007538942723
     maxEnemiesAffected: 0
     rangeBetweenEnemies: 0
     length: 0
@@ -30,6 +30,6 @@ MonoBehaviour:
   references:
     version: 2
     RefIds:
-    - rid: 503757346850996257
+    - rid: 7441198007538942723
       type: {class: MultipleStrategy, ns: , asm: Assembly-CSharp}
       data: 

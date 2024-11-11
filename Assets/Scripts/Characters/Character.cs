@@ -7,6 +7,8 @@ public abstract class Character : MonoBehaviour
 {
     [SerializeField] protected float life;
     [SerializeField] protected Slider healthBar;
+    [SerializeField] protected GameObject castCircleTarget;
+    [SerializeField] protected GameObject castCircle;
 
     protected void Start()
     {
@@ -19,4 +21,17 @@ public abstract class Character : MonoBehaviour
         healthBar.value = life;
     }
 
+    public void BeingTargeted(bool isTargeted)
+    {
+        castCircleTarget.SetActive(isTargeted);
+    }
+
+    protected void ShowCastingCircle()
+    {
+        castCircle.SetActive(true);
+    }
+    protected void HideCastingCircle()
+    {
+        castCircle.SetActive(false);
+    }
 }

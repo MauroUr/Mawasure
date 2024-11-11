@@ -214,15 +214,24 @@ public class Player : Character
         castBar.SetActive(true);
         _animator.SetBool(animations[0], true);
         float startingLife = life;
+        
+        Character enemyCharacter;
+        enemy.TryGetComponent<Character>(out enemyCharacter);
 
         while (_castSlider.value < 100 && Vector3.Distance(transform.position, _nextPosition) < 0.1f && startingLife <= life && enemy != null)
         {
+            this.ShowCastingCircle();
+            if(enemyCharacter != null) 
+                enemyCharacter.BeingTargeted(true);
             _castSlider.value += stats.dexterity / (_selectedSpells[spellNumber].instanceLevel * _selectedSpells[spellNumber].spell.castDelayPerLevel) * Time.deltaTime * 15;
             Quaternion nextRotation = Quaternion.LookRotation(enemy.transform.position - transform.position);
             nextRotation.x = transform.rotation.x;
             rotationTarget.localRotation = nextRotation;
             yield return null;
         }
+        this.HideCastingCircle();
+        if (enemyCharacter != null)
+            enemyCharacter.BeingTargeted(false);
 
         _animator.SetBool(animations[0], false);
         _castSlider.value = 0;
