@@ -23,7 +23,7 @@ public class Boss : Enemy
             base.LateUpdate();
         }
     }
-    protected override IEnumerator CastSpell(GameObject enemy)
+    public override IEnumerator CastSpell(GameObject enemy)
     {
         castBar.SetActive(true);
         animator.SetBool(animations[2], true);
@@ -60,12 +60,11 @@ public class Boss : Enemy
     public void AwakeBoss()
     {
         this.animator.SetBool("IsAwake", true);
-        this._attackRadius += 1;
     }
 
     protected void SetAwake() 
     { 
-        _isAwake = true; 
-        StartCoroutine(this.LookForPlayer());
+        _isAwake = true;
+        this.ChangeState(new Idle(this));
     }
 }

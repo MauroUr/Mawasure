@@ -3489,11 +3489,13 @@ MonoBehaviour:
   - Cast
   - Casted
   radius: 40
+  attackRadius: 20
   damage: 20
   animator: {fileID: 1038674089395780622}
   attackDelay: 3
   experience: 4000
   canCast: 1
+  agent: {fileID: 7596969723811593369}
   castBar: {fileID: 5756670771848041032}
   spell: {fileID: 11400000, guid: 5ae125fd6a1b0be46a8f3e6279cf18d6, type: 2}
 --- !u!195 &7596969723811593369

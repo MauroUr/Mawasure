@@ -630,11 +630,13 @@ MonoBehaviour:
   - Run
   - Attack
   radius: 10
+  attackRadius: 5
   damage: 10
   animator: {fileID: 95706204029656638}
   attackDelay: 2
   experience: 1500
   canCast: 0
+  agent: {fileID: 337607925295672957}
 --- !u!54 &5175254490985085545
 Rigidbody:
   m_ObjectHideFlags: 0
