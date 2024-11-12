@@ -20,13 +20,13 @@ public class SpellService : MonoBehaviour
 
         ServiceLocator.instance.SetService(typeof(SpellService), this);
     }
-    public List<SpellInstanceWrapper> GetEquippedSpells()
+    public List<ISpells> GetEquippedSpells()
     {
         SpellSlot[] spells = spellsDragged.GetComponentsInChildren<SpellSlot>();
         if (spells.Length <= 0)
             return null;
 
-        List<SpellInstanceWrapper> spellsChosen = new List<SpellInstanceWrapper>(12);
+        List<ISpells> spellsChosen = new List<ISpells>(12);
 
         for (int i = 0; i < 12; i++)
             spellsChosen.Add(null);
@@ -35,7 +35,7 @@ public class SpellService : MonoBehaviour
         {
             if (spells[i].spellID == null) continue;
 
-            int index = spellBook.FindIndex(s => s.id == spells[i].spellID);
+            int index = spellBook.FindIndex(s => s.Id == spells[i].spellID);
             
             if (index != -1)
                 spellsChosen[i] = new SpellInstanceWrapper(spellBook[index], int.Parse(spells[i].level.text));

@@ -30,7 +30,7 @@ public class Player : Character
     [SerializeField] private GameObject castBar;
     private Slider _castSlider;
 
-    private List<SpellInstanceWrapper> _selectedSpells;
+    private List<ISpells> _selectedSpells;
     public Stats stats;
 
     public event Action OnStatsPressed;
@@ -156,8 +156,8 @@ public class Player : Character
     private bool HasCastingRequirements(int spellNumber)
     {
         return (_selectedSpells[spellNumber] != null
-            && _selectedSpells[spellNumber].spell.prefab != null
-            && manaBar.value > _selectedSpells[spellNumber].spell.manaPerLevel * _selectedSpells[spellNumber].instanceLevel
+            && _selectedSpells[spellNumber].Prefab != null
+            && manaBar.value > _selectedSpells[spellNumber].ManaPerLevel * _selectedSpells[spellNumber].Level
             && !castBar.activeSelf);
     }
 
@@ -223,7 +223,7 @@ public class Player : Character
             this.ShowCastingCircle();
             if(enemyCharacter != null) 
                 enemyCharacter.BeingTargeted(true);
-            _castSlider.value += stats.dexterity / (_selectedSpells[spellNumber].instanceLevel * _selectedSpells[spellNumber].spell.castDelayPerLevel) * Time.deltaTime * 15;
+            _castSlider.value += stats.dexterity / (_selectedSpells[spellNumber].Level * _selectedSpells[spellNumber].CastDelayPerLevel) * Time.deltaTime * 15;
             Quaternion nextRotation = Quaternion.LookRotation(enemy.transform.position - transform.position);
             nextRotation.x = transform.rotation.x;
             rotationTarget.localRotation = nextRotation;
@@ -241,10 +241,10 @@ public class Player : Character
             yield break;
 
         _animator.SetTrigger(animations[1]);
-        _selectedSpells[spellNumber].spell.level = _selectedSpells[spellNumber].instanceLevel;
-        SpellController.Cast(_selectedSpells[spellNumber].spell, transform.position, enemy.transform, stats.intelligence);
+        _selectedSpells[spellNumber].Level = _selectedSpells[spellNumber].Level;
+        SpellController.Cast(_selectedSpells[spellNumber], transform.position, enemy.transform, stats.intelligence);
 
-        manaBar.value -= _selectedSpells[spellNumber].spell.manaPerLevel * _selectedSpells[spellNumber].instanceLevel;
+        manaBar.value -= _selectedSpells[spellNumber].ManaPerLevel * _selectedSpells[spellNumber].Level;
     }
     #endregion
 

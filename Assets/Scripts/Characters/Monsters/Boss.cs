@@ -13,7 +13,7 @@ public class Boss : Enemy
     {
         base.Start();
         StopAllCoroutines();
-        spell.level = 5;
+        spell.Level = 5;
     }
     protected new void LateUpdate()
     {
@@ -37,7 +37,7 @@ public class Boss : Enemy
             this.ShowCastingCircle();
             if (enemyCharacter != null)
                 enemyCharacter.BeingTargeted(true);
-            _castSlider.value += 20 / (spell.level * spell.castDelayPerLevel) * Time.deltaTime * 15;
+            _castSlider.value += 20 / (spell.Level * spell.CastDelayPerLevel) * Time.deltaTime * 15;
             Quaternion nextRotation = Quaternion.LookRotation(enemy.transform.position - transform.position);
             nextRotation.x = transform.rotation.x;
             this.transform.localRotation = nextRotation;

@@ -10,19 +10,18 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fab3051ca1563b74195581d3b580b436, type: 3}
-  m_Name: Jupitel Thunder
+  m_Name: Fire Bolt
   m_EditorClassIdentifier: 
-  id: 1
-  level: 1
-  dmgPerLevel: 5
-  manaPerLevel: 3
-  castDelayPerLevel: 2
+  id: 0
+  dmgPerLevel: 10
+  manaPerLevel: 5
+  castDelayPerLevel: 1
   range: 0
-  prefab: {fileID: 1253317631034815755, guid: 5069bde209e041c4ea3d423034bb5243, type: 3}
-  offset: {x: 0, y: 0, z: 3}
+  prefab: {fileID: 1253317631034815755, guid: e8d0cb1edd5fbd34ba470b2369778f32, type: 3}
+  offset: {x: 5, y: 10, z: 0}
   conditionalData:
     strategy:
-      rid: 7441198007538942477
+      rid: 7441198113289929549
     maxEnemiesAffected: 0
     rangeBetweenEnemies: 0
     length: 0
@@ -30,6 +29,6 @@ MonoBehaviour:
   references:
     version: 2
     RefIds:
-    - rid: 7441198007538942477
-      type: {class: SingleStrategy, ns: , asm: Assembly-CSharp}
+    - rid: 7441198113289929549
+      type: {class: MultipleStrategy, ns: , asm: Assembly-CSharp}
       data: 

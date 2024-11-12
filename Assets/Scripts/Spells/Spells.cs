@@ -1,38 +1,27 @@
-using System.Collections;
-using System.Collections.Generic;
-using Unity.VisualScripting;
-using UnityEditor;
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "Spells", menuName = "Data/New Spell")]
 [System.Serializable]
-public class Spells : ScriptableObject
+public class Spells : ScriptableObject, ISpells
 {
-    public int id;
-    [HideInInspector] public int level;
-    public int dmgPerLevel;
-    public int manaPerLevel;
-    public float castDelayPerLevel;
-    public float range;
-    public GameObject prefab;
-    public Vector3 offset;
+    [SerializeField] private int id;
+    [HideInInspector] private int level;
+    [SerializeField] private int dmgPerLevel;
+    [SerializeField] private int manaPerLevel;
+    [SerializeField] private float castDelayPerLevel;
+    [SerializeField] private float range;
+    [SerializeField] private GameObject prefab;
+    [SerializeField] private Vector3 offset;
 
-    [SerializeField] public ConditionalData conditionalData;
+    [SerializeField] private ConditionalData conditionalData;
 
-    public Spells(Spells spells)
-    {
-        this.id = spells.id;
-        this.dmgPerLevel = spells.dmgPerLevel;
-        this.manaPerLevel = spells.manaPerLevel;
-        this.castDelayPerLevel = spells.castDelayPerLevel;
-        this.range = spells.range;
-        this.prefab = spells.prefab;
-        this.offset = spells.offset;
-        this.conditionalData = spells.conditionalData;
-    }
-
-    public Spells()
-    {
-
-    }
+    public int Id => id;
+    public int Level { get => level; set => level = value; } 
+    public int DmgPerLevel => dmgPerLevel;
+    public int ManaPerLevel => manaPerLevel;
+    public float CastDelayPerLevel => castDelayPerLevel;
+    public float Range => range;
+    public GameObject Prefab => prefab;
+    public Vector3 Offset => offset;
+    public ConditionalData ConditionalData => conditionalData;
 }

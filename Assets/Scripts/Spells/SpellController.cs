@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class SpellController : MonoBehaviour
 {
-    public Spells _currentSpell;
+    public ISpells _currentSpell;
     [HideInInspector] public Transform _target;
     [HideInInspector] public int _playerInt;
 
@@ -21,14 +21,14 @@ public class SpellController : MonoBehaviour
         Quaternion rotation = Quaternion.LookRotation(direction);
         this.transform.rotation = rotation * Quaternion.Euler(90, 0, 0);
     }
-    public static void Cast(Spells spell,Vector3 playerPos, Transform target, int playerInt)
+    public static void Cast(ISpells spell,Vector3 playerPos, Transform target, int playerInt)
     {
-        spell.conditionalData.strategy.Cast(spell, playerPos, target, playerInt);
+        spell.ConditionalData.strategy.Cast(spell, playerPos, target, playerInt);
     }
 
-    public static SpellController Instantiation(Spells spell, Vector3 playerPos)
+    public static SpellController Instantiation(ISpells spell, Vector3 playerPos)
     {
-        return Instantiate(spell.prefab, playerPos + spell.offset, Quaternion.identity).GetComponent<SpellController>();
+        return Instantiate(spell.Prefab, playerPos + spell.Offset, Quaternion.identity).GetComponent<SpellController>();
     }
     public void MultiCast(Vector3 playerPos)
     {
@@ -37,19 +37,23 @@ public class SpellController : MonoBehaviour
     private IEnumerator Multicast(Vector3 playerPos)
     {
         yield return new WaitForSecondsRealtime(0.2f);
-        for (int i = 0; i < _currentSpell.level - 1; i++)
+        for (int i = 0; i < _currentSpell.Level - 1; i++)
         {
-            ProjectileFlyweight flyweight = FlyweightFactory.instance.GetProjectile(_currentSpell.id);
-            SpellController controller = _currentSpell.prefab.gameObject.GetComponent<SpellController>();
-            controller._target = this._target;
-            controller._playerInt = this._playerInt;
-            controller._currentSpell = this._currentSpell;
+            ProjectileFlyweight flyweight = FlyweightFactory.instance.GetProjectile(_currentSpell.Id);
 
-            MeshRenderer mesh = Instantiate(_currentSpell.prefab, playerPos + _currentSpell.offset, Quaternion.identity).GetComponent<MeshRenderer>();
-            mesh.material = flyweight.material;
-            mesh.bounds.size.Set(flyweight.size.x, flyweight.size.y, flyweight.size.z);
+            GameObject spellInstance = Instantiate(_currentSpell.Prefab, playerPos + _currentSpell.Offset, Quaternion.identity);
+            SpellController controller = spellInstance.GetComponent<SpellController>();
 
-            yield return new WaitForSecondsRealtime(0.2f);
+            controller._currentSpell = _currentSpell;
+            controller._target = _target;
+            controller._playerInt = _playerInt;
+
+            MeshRenderer mesh = spellInstance.GetComponent<MeshRenderer>();
+            if (mesh != null)
+            {
+                mesh.material = flyweight.material;
+                mesh.bounds.size.Set(flyweight.size.x, flyweight.size.y, flyweight.size.z);
+            }
         }
     }
 
@@ -61,10 +65,10 @@ public class SpellController : MonoBehaviour
             return;
         }
 
-        if (_currentSpell.conditionalData.strategy is SingleStrategy)
-            enemy.TakeDamage(_currentSpell.dmgPerLevel * _currentSpell.level * _playerInt);
+        if (_currentSpell.ConditionalData.strategy is SingleStrategy)
+            enemy.TakeDamage(_currentSpell.DmgPerLevel * _currentSpell.Level * _playerInt);
         else
-            enemy.TakeDamage(_currentSpell.dmgPerLevel);
+            enemy.TakeDamage(_currentSpell.DmgPerLevel);
         Destroy(this.gameObject);
     }
 }

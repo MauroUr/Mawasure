@@ -7,7 +7,7 @@ public class AOEStrategy : SpellCastingStrategy
 {
     public float length;
     public float width;
-    public override void Cast(Spells spell, Vector3 playerPos, Transform target, int playerInt)
+    public override void Cast(ISpells spell, Vector3 playerPos, Transform target, int playerInt)
     {
 
     }
