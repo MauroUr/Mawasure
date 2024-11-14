@@ -10,7 +10,7 @@ public abstract class Character : MonoBehaviour
     [SerializeField] protected GameObject castCircleTarget;
     [SerializeField] protected GameObject castCircle;
 
-    protected void Start()
+    protected virtual void Start()
     {
         healthBar.maxValue = life;
         healthBar.value = life;

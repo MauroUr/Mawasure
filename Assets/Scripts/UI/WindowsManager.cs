@@ -37,6 +37,8 @@ public class WindowsManager : MonoBehaviour
             player.OnSpellUIPressed += ToggleSpellsPanel;
         }
         Experience.Instance.OnLevelUp += AssignPoints;
+        statPointsIncreased = -7;
+        stats[1].text = 8.ToString();
     }
 
     private void AssignPoints()
@@ -95,7 +97,10 @@ public class WindowsManager : MonoBehaviour
     {
         ApplyPlayerStats();
         statsBeforeApply.Clear();  
-        statPointsIncreased = 0; 
+        statPointsIncreased = 0;
+        if (statsPanel.activeSelf)
+            statsPanel.SetActive(false);
+
     }
 
     private void ApplyPlayerStats()
@@ -108,16 +113,14 @@ public class WindowsManager : MonoBehaviour
         player.stats.luck = int.Parse(stats[5].text);
     }
 
-    public void Apply()
+    public void ApplySpellsFromUI()
     {
         ApplyChanges(spellsLevelBeforeApply);
-        ApplyStatsFromUI();
 
         spellsLevelBeforeApply.Clear();
-        statsBeforeApply.Clear();
 
         spellPointsIncreased = 0;
-        statPointsIncreased = 0;
+
     }
 
     public void Cancel()

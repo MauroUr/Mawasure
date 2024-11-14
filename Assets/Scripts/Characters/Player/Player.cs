@@ -36,6 +36,8 @@ public class Player : Character
     public event Action OnStatsPressed;
     public event Action OnSpellUIPressed;
 
+    private Coroutine rotationCoroutine;
+
     #region Setup
     private void Awake()
     {
@@ -57,6 +59,7 @@ public class Player : Character
         base.Start();
         _castSlider = castBar.GetComponent<Slider>();
         stats = Stats.NewStats();
+        stats.dexterity = 8;
         _nextPosition = transform.position;
         StartCoroutine(GetUnlockedSpells());
     }
@@ -107,6 +110,7 @@ public class Player : Character
         Ray ray = Camera.main.ScreenPointToRay(Mouse.current.position.ReadValue());
         if (Physics.Raycast(ray, out RaycastHit hit))
             _nextPosition = hit.point;
+
     }
 
     private void FixedUpdate()
@@ -123,10 +127,27 @@ public class Player : Character
             _animator.SetBool(animations[2], true);
             _nextPosition.y = transform.position.y;
             transform.position = Vector3.MoveTowards(transform.position, _nextPosition, Time.deltaTime * this.movSpeed);
-            rotationTarget.localRotation = Quaternion.LookRotation(_nextPosition - transform.position);
+            if(rotationCoroutine != null)
+                StopCoroutine(rotationCoroutine);
+            rotationCoroutine = StartCoroutine(SmoothRotateTowards(_nextPosition));
         }
         else
             _animator.SetBool(animations[2], false);
+    }
+
+    private IEnumerator SmoothRotateTowards(Vector3 targetPosition)
+    {
+        float rotationSpeed = 5f;
+        Quaternion initialRotation = rotationTarget.localRotation;
+        Quaternion targetRotation = Quaternion.LookRotation(targetPosition - transform.position);
+
+        while (Quaternion.Angle(rotationTarget.localRotation, targetRotation) > 0.1f)
+        {
+            rotationTarget.localRotation = Quaternion.Slerp(rotationTarget.localRotation, targetRotation, Time.deltaTime * rotationSpeed);
+            yield return null;
+        }
+
+        rotationTarget.localRotation = targetRotation;
     }
     #endregion
 
@@ -138,6 +159,10 @@ public class Player : Character
         {
             if (bindingPath == "/Keyboard/f" + (i + 1))
             {
+                if (CursorManager.instance.GetCurrentCursor() == CursorManager.CursorTypes.SpellSelect)
+                    StopAllCoroutines();
+                else if (castBar.activeSelf)
+                    return;
                 TryCasting(i);
                 break;
             }
@@ -226,7 +251,8 @@ public class Player : Character
             _castSlider.value += stats.dexterity / (_selectedSpells[spellNumber].Level * _selectedSpells[spellNumber].CastDelayPerLevel) * Time.deltaTime * 15;
             Quaternion nextRotation = Quaternion.LookRotation(enemy.transform.position - transform.position);
             nextRotation.x = transform.rotation.x;
-            rotationTarget.localRotation = nextRotation;
+            if(nextRotation != Quaternion.identity) 
+                rotationTarget.localRotation = nextRotation;
             yield return null;
         }
         this.HideCastingCircle();
@@ -240,9 +266,9 @@ public class Player : Character
         if (Vector3.Distance(transform.position, _nextPosition) > 0.1f || startingLife > life || enemy == null)
             yield break;
 
-        _animator.SetTrigger(animations[1]);
+        //_animator.SetTrigger(animations[1]);
         _selectedSpells[spellNumber].Level = _selectedSpells[spellNumber].Level;
-        SpellController.Cast(_selectedSpells[spellNumber], transform.position, enemy.transform, stats.intelligence);
+        SpellController.Cast(_selectedSpells[spellNumber], rotationTarget, enemy.transform, stats.intelligence);
 
         manaBar.value -= _selectedSpells[spellNumber].ManaPerLevel * _selectedSpells[spellNumber].Level;
     }

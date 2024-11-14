@@ -19,11 +19,10 @@ public class Enemy : Character
 
     public NavMeshAgent agent;
     public Collider playerFound { get; set; }
-    public State currentState { get; private set; }
-    
+    public State currentState { get; protected set; }
     public bool isAngry { get; private set; }
 
-    private new void Start()
+    protected override void Start()
     {
         base.Start();
         isAngry = false;
@@ -32,7 +31,8 @@ public class Enemy : Character
         currentState = new Idle(this);
         currentState.Enter(currentState);
     }
-    protected void LateUpdate()
+
+    protected virtual void LateUpdate()
     {
         healthBar.gameObject.transform.rotation = Camera.main.transform.rotation;
 
@@ -44,10 +44,13 @@ public class Enemy : Character
         if (s is Cast && !canCast)
             return;
 
-        currentState.Exit(s);
-        s.Enter(currentState);
-        currentState = s;
+        if(currentState != null)
+            currentState.Exit(s);
         
+        State prevState = currentState;
+        currentState = s;
+        currentState.Enter(prevState);
+
     }
 
     public virtual IEnumerator CastSpell(GameObject enemy)
@@ -71,7 +74,11 @@ public class Enemy : Character
         }
         else
         {
-            ChangeState(new Melee(this));
+            if (playerFound == null)
+            {
+                playerFound = Physics.OverlapSphere(transform.position, 100, 1 << 3).FirstOrDefault();
+                ChangeState(new Melee(this));
+            }
             StopCoroutine(nameof(HandleAngerMode));
             StartCoroutine(HandleAngerMode());
         }

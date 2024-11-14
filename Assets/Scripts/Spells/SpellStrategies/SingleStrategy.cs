@@ -5,9 +5,9 @@ using UnityEngine;
 [System.Serializable]
 public class SingleStrategy : SpellCastingStrategy
 {
-    public override void Cast(ISpells spell, Vector3 playerPos, Transform target, int playerInt)
+    public override void Cast(ISpells spell, Transform playerTransform, Transform target, int playerInt)
     {
-        SpellController controller = SpellController.Instantiation(spell, playerPos);
+        SpellController controller = SpellController.Instantiation(spell, playerTransform);
         controller._target = target;
         controller._playerInt = playerInt;
         controller._currentSpell = spell;

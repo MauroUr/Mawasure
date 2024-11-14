@@ -19,29 +19,37 @@ public class SpellController : MonoBehaviour
 
         Vector3 direction = _target.position - this.transform.position;
         Quaternion rotation = Quaternion.LookRotation(direction);
-        this.transform.rotation = rotation * Quaternion.Euler(90, 0, 0);
+        if(rotation != Quaternion.identity)
+            this.transform.rotation = rotation * Quaternion.Euler(90, 0, 0);
     }
-    public static void Cast(ISpells spell,Vector3 playerPos, Transform target, int playerInt)
+    public static void Cast(ISpells spell,Transform playerTransform, Transform target, int playerInt)
     {
-        spell.ConditionalData.strategy.Cast(spell, playerPos, target, playerInt);
+        spell.ConditionalData.strategy.Cast(spell, playerTransform, target, playerInt);
     }
 
-    public static SpellController Instantiation(ISpells spell, Vector3 playerPos)
+    public static SpellController Instantiation(ISpells spell, Transform playerTransform)
     {
-        return Instantiate(spell.Prefab, playerPos + spell.Offset, Quaternion.identity).GetComponent<SpellController>();
+        Vector3 calculatedOffset = playerTransform.position +
+                               playerTransform.right * spell.Offset.x +    
+                               playerTransform.up * spell.Offset.y +        
+                               playerTransform.forward * spell.Offset.z;
+        return Instantiate(spell.Prefab, calculatedOffset, Quaternion.identity).GetComponent<SpellController>();
     }
-    public void MultiCast(Vector3 playerPos)
+    public void MultiCast(Transform playerTransform)
     {
-        StartCoroutine(Multicast(playerPos));
+        StartCoroutine(Multicast(playerTransform));
     }
-    private IEnumerator Multicast(Vector3 playerPos)
+    private IEnumerator Multicast(Transform playerTransform)
     {
         yield return new WaitForSecondsRealtime(0.2f);
         for (int i = 0; i < _currentSpell.Level - 1; i++)
         {
             ProjectileFlyweight flyweight = FlyweightFactory.instance.GetProjectile(_currentSpell.Id);
-
-            GameObject spellInstance = Instantiate(_currentSpell.Prefab, playerPos + _currentSpell.Offset, Quaternion.identity);
+            Vector3 calculatedOffset = playerTransform.position +
+                               playerTransform.right * _currentSpell.Offset.x +     // Right (5 units)
+                               playerTransform.up * _currentSpell.Offset.y +        // Up (10 units)
+                               playerTransform.forward * _currentSpell.Offset.z;
+            GameObject spellInstance = Instantiate(_currentSpell.Prefab, calculatedOffset, Quaternion.identity);
             SpellController controller = spellInstance.GetComponent<SpellController>();
 
             controller._currentSpell = _currentSpell;
@@ -54,12 +62,16 @@ public class SpellController : MonoBehaviour
                 mesh.material = flyweight.material;
                 mesh.bounds.size.Set(flyweight.size.x, flyweight.size.y, flyweight.size.z);
             }
+            yield return new WaitForSecondsRealtime(0.2f);
         }
     }
 
     private void OnTriggerEnter(Collider other)
     {
-        if (!other.gameObject.TryGetComponent<Character>(out Character enemy))
+        Character enemy;
+        if (other.gameObject.layer == 3)
+            enemy = other.GetComponentInParent<Character>();
+        else if (!other.gameObject.TryGetComponent<Character>(out enemy))
         {
             Destroy(this.gameObject);
             return;

@@ -21,7 +21,7 @@ MonoBehaviour:
   offset: {x: 0, y: 0, z: 3}
   conditionalData:
     strategy:
-      rid: 7441198113047183481
+      rid: 7441198149431984485
     maxEnemiesAffected: 0
     rangeBetweenEnemies: 0
     length: 0
@@ -29,6 +29,6 @@ MonoBehaviour:
   references:
     version: 2
     RefIds:
-    - rid: 7441198113047183481
+    - rid: 7441198149431984485
       type: {class: SingleStrategy, ns: , asm: Assembly-CSharp}
       data: 
