@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
@@ -109,7 +110,10 @@ public class Player : Character
     {
         Ray ray = Camera.main.ScreenPointToRay(Mouse.current.position.ReadValue());
         if (Physics.Raycast(ray, out RaycastHit hit))
+        {
             _nextPosition = hit.point;
+            CursorManager.instance.SetNextPosition(_nextPosition);
+        }
 
     }
 
@@ -120,25 +124,27 @@ public class Player : Character
 
     private void MovePlayer()
     {
-        const float positionThreshold = 0.1f;
+        const float positionThreshold = 0.2f;
 
         if (Vector3.Distance(transform.position, _nextPosition) > positionThreshold)
         {
             _animator.SetBool(animations[2], true);
             _nextPosition.y = transform.position.y;
             transform.position = Vector3.MoveTowards(transform.position, _nextPosition, Time.deltaTime * this.movSpeed);
-            if(rotationCoroutine != null)
+            if (rotationCoroutine != null)
                 StopCoroutine(rotationCoroutine);
             rotationCoroutine = StartCoroutine(SmoothRotateTowards(_nextPosition));
         }
-        else
+        else if (transform.position != _nextPosition)
+        {
             _animator.SetBool(animations[2], false);
+            CursorManager.instance.DestroyArrows();
+        }
     }
 
     private IEnumerator SmoothRotateTowards(Vector3 targetPosition)
     {
         float rotationSpeed = 5f;
-        Quaternion initialRotation = rotationTarget.localRotation;
         Quaternion targetRotation = Quaternion.LookRotation(targetPosition - transform.position);
 
         while (Quaternion.Angle(rotationTarget.localRotation, targetRotation) > 0.1f)

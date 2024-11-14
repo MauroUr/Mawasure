@@ -14,6 +14,7 @@ public class Boss : Enemy
         base.Start();
         currentState.Exit(currentState);
         currentState = null;
+        agent.ResetPath();
         _spellInstance = new SpellInstanceWrapper(spell, 5);
     }
     protected new void LateUpdate()

@@ -6,6 +6,8 @@ public class CursorManager : MonoBehaviour
     public static CursorManager instance;
     private List<Texture2D> cursorTextures;
     private CursorTypes currentCursor;
+    [SerializeField] private GameObject nextPosArrows;
+    private GameObject prevPosArrows;
     public enum CursorTypes
     {
         Attack,
@@ -50,5 +52,21 @@ public class CursorManager : MonoBehaviour
     {
         Cursor.SetCursor(cursorTextures[(int)cursor], Vector2.one, CursorMode.Auto);
         currentCursor = cursor;
+    }
+
+    public void SetNextPosition(Vector3 position)
+    {
+        if(prevPosArrows != null)
+            Destroy(prevPosArrows);
+        position.y += 0.1f;
+        prevPosArrows = Instantiate(nextPosArrows, position, Quaternion.identity);
+        prevPosArrows.transform.Rotate(new Vector3(90,0));
+        
+    }
+    public void DestroyArrows()
+    {
+        if (prevPosArrows != null)
+            Destroy(prevPosArrows);
+
     }
 }

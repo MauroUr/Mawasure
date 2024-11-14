@@ -6809,6 +6809,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7b8503c4bcb59934a8b5b22100070e32, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  nextPosArrows: {fileID: 3922806788659720140, guid: c10e97c5e7570ac4a9c5a649be96e127,
+    type: 3}
 --- !u!1001 &330626493
 PrefabInstance:
   m_ObjectHideFlags: 0
