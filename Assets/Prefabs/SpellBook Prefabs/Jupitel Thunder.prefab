@@ -48,7 +48,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d42f4bc381e0af44fa3b7ee3b6f5c096, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _currentSpell: {fileID: 11400000, guid: f2d0749545417a64c8a7e10db7ca826b, type: 2}
   _target: {fileID: 0}
   _playerInt: 0
 --- !u!199 &4428723948999713639
@@ -5047,7 +5046,7 @@ SphereCollider:
   m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 72
   m_ExcludeLayers:
     serializedVersion: 2
     m_Bits: 0
