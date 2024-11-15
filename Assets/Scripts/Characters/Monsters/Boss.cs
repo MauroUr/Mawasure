@@ -20,9 +20,7 @@ public class Boss : Enemy
     protected new void LateUpdate()
     {
         if (_isAwake)
-        {
             base.LateUpdate();
-        }
     }
     public override IEnumerator CastSpell(GameObject enemy)
     {
@@ -75,5 +73,6 @@ public class Boss : Enemy
     {
         this.ChangeState(new Idle(this));
         _isAwake = true;
+        this.GetComponent<CapsuleCollider>().enabled = true;
     }
 }

@@ -112,6 +112,35 @@ public class Player : Character
         if (Physics.Raycast(ray, out RaycastHit hit))
         {
             _nextPosition = hit.point;
+            if (hit.collider.gameObject.layer != 9)
+            {
+                float searchRadius = 10f;
+
+                Collider[] colliders = Physics.OverlapSphere(hit.point, searchRadius, LayerMask.GetMask("Floor"));
+
+                if (colliders.Length > 0)
+                {
+                    Collider closestCollider = null;
+                    float closestDistance = float.MaxValue;
+
+                    foreach (var collider in colliders)
+                    {
+                        float distance = Vector3.Distance(hit.point, collider.ClosestPoint(hit.point));
+                        if (distance < closestDistance)
+                        {
+                            closestDistance = distance;
+                            closestCollider = collider;
+                        }
+                    }
+                    if (closestCollider != null)
+                    {
+                        _nextPosition = closestCollider.ClosestPoint(hit.point);
+                        _nextPosition -= (_nextPosition - transform.position).normalized * 1.5f;
+                    }
+                    else
+                        _nextPosition = transform.position;
+                }
+            }
             CursorManager.instance.SetNextPosition(_nextPosition);
         }
 
