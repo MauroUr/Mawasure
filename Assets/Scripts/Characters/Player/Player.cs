@@ -165,10 +165,13 @@ public class Player : Character
             rotationCoroutine = StartCoroutine(SmoothRotateTowards(_nextPosition));
         }
         else if (transform.position != _nextPosition)
-        {
-            _animator.SetBool(animations[2], false);
-            CursorManager.instance.DestroyArrows();
-        }
+            ArrivedToNextPosition();
+    }
+
+    private void ArrivedToNextPosition()
+    {
+        _animator.SetBool(animations[2], false);
+        CursorManager.instance.DestroyArrows();
     }
 
     private IEnumerator SmoothRotateTowards(Vector3 targetPosition)
@@ -246,6 +249,7 @@ public class Player : Character
             if (closestEnemy != null)
             {
                 _nextPosition = this.transform.position;
+                ArrivedToNextPosition();
                 yield return StartCoroutine(CastSpell(closestEnemy.gameObject, spellNumber));
             }
         }
@@ -274,19 +278,19 @@ public class Player : Character
         castBar.SetActive(true);
         _animator.SetBool(animations[0], true);
         float startingLife = life;
-        
+
         Character enemyCharacter;
         enemy.TryGetComponent<Character>(out enemyCharacter);
 
         while (_castSlider.value < 100 && Vector3.Distance(transform.position, _nextPosition) < 0.1f && startingLife <= life && enemy != null)
         {
             this.ShowCastingCircle();
-            if(enemyCharacter != null) 
+            if (enemyCharacter != null)
                 enemyCharacter.BeingTargeted(true);
             _castSlider.value += stats.dexterity / (_selectedSpells[spellNumber].Level * _selectedSpells[spellNumber].CastDelayPerLevel) * Time.deltaTime * 15;
             Quaternion nextRotation = Quaternion.LookRotation(enemy.transform.position - transform.position);
             nextRotation.x = transform.rotation.x;
-            if(nextRotation != Quaternion.identity) 
+            if (nextRotation != Quaternion.identity)
                 rotationTarget.localRotation = nextRotation;
             yield return null;
         }
