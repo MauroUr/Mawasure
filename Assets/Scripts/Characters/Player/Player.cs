@@ -112,9 +112,10 @@ public class Player : Character
         if (Physics.Raycast(ray, out RaycastHit hit))
         {
             _nextPosition = hit.point;
+            _nextPosition.y = this.transform.position.y;
             if (hit.collider.gameObject.layer != 9)
             {
-                float searchRadius = 10f;
+                float searchRadius = 15f;
 
                 Collider[] colliders = Physics.OverlapSphere(hit.point, searchRadius, LayerMask.GetMask("Floor"));
 
@@ -135,7 +136,7 @@ public class Player : Character
                     if (closestCollider != null)
                     {
                         _nextPosition = closestCollider.ClosestPoint(hit.point);
-                        _nextPosition -= (_nextPosition - transform.position).normalized * 1.5f;
+                        _nextPosition -= (_nextPosition - transform.position).normalized * 2f;
                     }
                     else
                         _nextPosition = transform.position;

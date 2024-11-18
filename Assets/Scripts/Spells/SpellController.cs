@@ -24,32 +24,30 @@ public class SpellController : MonoBehaviour
     }
     public static void Cast(ISpells spell,Transform playerTransform, Transform target, int playerInt)
     {
-        spell.ConditionalData.strategy.Cast(spell, playerTransform, target, playerInt);
+        Vector3 calculatedOffset = playerTransform.position +
+                               playerTransform.right * spell.Offset.x +
+                               playerTransform.up * spell.Offset.y +
+                               playerTransform.forward * spell.Offset.z;
+        spell.ConditionalData.strategy.Cast(spell, calculatedOffset, target, playerInt);
     }
 
-    public static SpellController Instantiation(ISpells spell, Transform playerTransform)
+    public static SpellController Instantiation(ISpells spell, Vector3 calculatedOffset)
     {
-        Vector3 calculatedOffset = playerTransform.position +
-                               playerTransform.right * spell.Offset.x +    
-                               playerTransform.up * spell.Offset.y +        
-                               playerTransform.forward * spell.Offset.z;
+        
         return Instantiate(spell.Prefab, calculatedOffset, Quaternion.identity).GetComponent<SpellController>();
     }
-    public void MultiCast(Transform playerTransform)
+    public void MultiCast(Vector3 offSet)
     {
-        StartCoroutine(Multicast(playerTransform));
+        StartCoroutine(Multicast(offSet));
     }
-    private IEnumerator Multicast(Transform playerTransform)
+    private IEnumerator Multicast(Vector3 offSet)
     {
         yield return new WaitForSecondsRealtime(0.2f);
         for (int i = 0; i < _currentSpell.Level - 1; i++)
         {
             ProjectileFlyweight flyweight = FlyweightFactory.instance.GetProjectile(_currentSpell.Id);
-            Vector3 calculatedOffset = playerTransform.position +
-                               playerTransform.right * _currentSpell.Offset.x +     // Right (5 units)
-                               playerTransform.up * _currentSpell.Offset.y +        // Up (10 units)
-                               playerTransform.forward * _currentSpell.Offset.z;
-            GameObject spellInstance = Instantiate(_currentSpell.Prefab, calculatedOffset, Quaternion.identity);
+
+            GameObject spellInstance = Instantiate(_currentSpell.Prefab, offSet, Quaternion.identity);
             SpellController controller = spellInstance.GetComponent<SpellController>();
 
             controller._currentSpell = _currentSpell;
