@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -8,6 +9,7 @@ public class CursorManager : MonoBehaviour
     private CursorTypes currentCursor;
     [SerializeField] private GameObject nextPosArrows;
     private GameObject prevPosArrows;
+    private Coroutine scaleArrows;
     public enum CursorTypes
     {
         Attack,
@@ -54,18 +56,35 @@ public class CursorManager : MonoBehaviour
         currentCursor = cursor;
     }
 
-    public void SetNextPosition(Vector3 position)
+    public void SetNextPosition(Vector3 position, Transform playerTF)
     {
-        if(prevPosArrows != null)
-            Destroy(prevPosArrows);
+        DestroyArrows();
         position.y += 0.1f;
         prevPosArrows = Instantiate(nextPosArrows, position, Quaternion.identity);
         prevPosArrows.transform.Rotate(new Vector3(90,0));
+        scaleArrows = StartCoroutine(ScaleArrows(playerTF));
+    }
+    private IEnumerator ScaleArrows(Transform playerPos)
+    {
+        float initialDistance = Vector3.Distance(prevPosArrows.transform.position, playerPos.position);
+        float newDistance;
+
+        while (prevPosArrows.transform.localScale.x > 0.01f)
+        {
+            newDistance = Vector3.Distance(prevPosArrows.transform.position, playerPos.position);
+            float scale = Mathf.Clamp01(newDistance / initialDistance);
+            prevPosArrows.transform.localScale = new Vector3(scale * 4 + 0.2f, scale * 4 + 0.2f, 1);
+            yield return null;
+        }
+        
+        prevPosArrows.transform.localScale = Vector3.zero;
     }
     public void DestroyArrows()
     {
         if (prevPosArrows != null)
+        {
+            StopCoroutine(scaleArrows);
             Destroy(prevPosArrows);
-
+        }
     }
 }

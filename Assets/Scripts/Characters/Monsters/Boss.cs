@@ -8,7 +8,7 @@ public class Boss : Enemy
     private float _casting = 0;
     [SerializeField] private Spells spell;
     private ISpells _spellInstance;
-
+    [SerializeField] private GameObject winPanel;
     protected override void Start()
     {
         base.Start();
@@ -37,7 +37,7 @@ public class Boss : Enemy
                 enemyCharacter.BeingTargeted(true);
             _casting += 20 / (spell.Level * spell.CastDelayPerLevel) * Time.deltaTime * 1.3f;
 
-            if (_casting > 60)
+            if (_casting > 60 && animator.GetBool(animations[4]))
             {
                 animator.SetBool(animations[4], false);
                 animator.SetTrigger(animations[5]);
@@ -61,6 +61,7 @@ public class Boss : Enemy
             yield break;
         }
 
+        animator.ResetTrigger(animations[2]);
         SpellController.Cast(_spellInstance, transform, enemy.transform, 15);
         this.ChangeState(new Idle(this));
     }
@@ -74,5 +75,11 @@ public class Boss : Enemy
         this.ChangeState(new Idle(this));
         _isAwake = true;
         this.GetComponent<CapsuleCollider>().enabled = true;
+    }
+
+    public override void DestroySelf() 
+    { 
+        winPanel.SetActive(true);
+        Destroy(gameObject); 
     }
 }

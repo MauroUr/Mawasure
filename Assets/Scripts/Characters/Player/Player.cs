@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -38,6 +39,8 @@ public class Player : Character
     public event Action OnSpellUIPressed;
 
     private Coroutine rotationCoroutine;
+
+    [SerializeField] private GameObject losePanel;
 
     #region Setup
     private void Awake()
@@ -142,7 +145,7 @@ public class Player : Character
                         _nextPosition = transform.position;
                 }
             }
-            CursorManager.instance.SetNextPosition(_nextPosition);
+            CursorManager.instance.SetNextPosition(_nextPosition, this.transform);
         }
 
     }
@@ -335,6 +338,14 @@ public class Player : Character
     {
         base.TakeDamage(damage);
         _animator.SetTrigger(animations[2]);
+        if (life <= 0 && !_animator.GetBool(animations[4]))
+        {
+            _animator.ResetTrigger(animations[2]);
+            _animator.SetBool(animations[4], true);
+            losePanel.GetComponentInChildren<TextMeshProUGUI>().text = "YOU LOSE!";
+            losePanel.SetActive(true);
+            this.enabled = false;
+        }
     }
     private void RegenerateMana()
     {

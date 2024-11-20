@@ -45,7 +45,7 @@ public class SpellController : MonoBehaviour
         yield return new WaitForSecondsRealtime(0.2f);
         for (int i = 0; i < _currentSpell.Level - 1; i++)
         {
-            ProjectileFlyweight flyweight = FlyweightFactory.instance.GetProjectile(_currentSpell.Id);
+            //ProjectileFlyweight flyweight = FlyweightFactory.instance.GetProjectile(_currentSpell.Id);
 
             GameObject spellInstance = Instantiate(_currentSpell.Prefab, offSet, Quaternion.identity);
             SpellController controller = spellInstance.GetComponent<SpellController>();
@@ -54,12 +54,12 @@ public class SpellController : MonoBehaviour
             controller._target = _target;
             controller._playerInt = _playerInt;
 
-            MeshRenderer mesh = spellInstance.GetComponent<MeshRenderer>();
-            if (mesh != null)
-            {
-                mesh.material = flyweight.material;
-                mesh.bounds.size.Set(flyweight.size.x, flyweight.size.y, flyweight.size.z);
-            }
+           // MeshRenderer mesh = spellInstance.GetComponent<MeshRenderer>();
+            //if (mesh != null)
+           // {
+             //   mesh.material = flyweight.material;
+            //    mesh.bounds.size.Set(flyweight.size.x, flyweight.size.y, flyweight.size.z);
+            //}
             yield return new WaitForSecondsRealtime(0.2f);
         }
     }

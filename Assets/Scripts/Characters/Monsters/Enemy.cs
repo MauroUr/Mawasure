@@ -61,35 +61,42 @@ public class Enemy : Character
     public void MakeDamage()
     {
         playerFound.gameObject.GetComponentInParent<Character>().TakeDamage(damage);
+        animator.ResetTrigger(animations[2]);
     }
 
     public override void TakeDamage(float damage)
     {
         base.TakeDamage(damage);
-        animator.ResetTrigger(animations[2]);
-        animator.SetTrigger(animations[2]);
-        if (life <= 0)
+
+        if (!animator.GetBool(animations[3])) 
         {
-            Experience.Instance.AddXP(experience);
             animator.ResetTrigger(animations[2]);
-            animator.SetBool(animations[3], true);
-            healthBar.gameObject.SetActive(false);
-            agent.ResetPath();
-            this.enabled = false;
-        }
-        else
-        {
-            if (playerFound == null)
+            animator.SetTrigger(animations[2]);
+
+            if (life <= 0)
             {
-                playerFound = Physics.OverlapSphere(transform.position, 100, 1 << 3).FirstOrDefault();
-                ChangeState(new Melee(this));
+                Experience.Instance.AddXP(experience);
+                animator.ResetTrigger(animations[2]);
+                animator.SetBool(animations[3], true);
+                healthBar.gameObject.SetActive(false);
+                agent.ResetPath();
+                this.enabled = false;
             }
-            StopCoroutine(nameof(HandleAngerMode));
-            StartCoroutine(HandleAngerMode());
+            else
+            {
+                if (playerFound == null)
+                {
+                    playerFound = Physics.OverlapSphere(transform.position, 100, 1 << 3).FirstOrDefault();
+                    ChangeState(new Melee(this));
+                }
+                StopCoroutine(nameof(HandleAngerMode));
+                StartCoroutine(HandleAngerMode());
+            }
         }
+        
     }
 
-    public void DestroySelf() { Destroy(gameObject); }
+    public virtual void DestroySelf() { Destroy(gameObject); }
     private IEnumerator HandleAngerMode()
     {
         isAngry = true;

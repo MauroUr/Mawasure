@@ -540,11 +540,11 @@ Rigidbody:
     m_Bits: 0
   m_ImplicitCom: 1
   m_ImplicitTensor: 1
-  m_UseGravity: 1
+  m_UseGravity: 0
   m_IsKinematic: 1
-  m_Interpolate: 0
+  m_Interpolate: 1
   m_Constraints: 112
-  m_CollisionDetection: 0
+  m_CollisionDetection: 1
 --- !u!114 &71739306659890757
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -557,19 +557,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 164a4fa7af5ce67429f4c88bd4a4914f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  life: 30
+  life: 40
   healthBar: {fileID: 857484008461405151}
   castCircleTarget: {fileID: 9180549375462594490}
   castCircle: {fileID: 0}
   animations:
   - Run
   - Attack
+  - Hit
+  - Dead
   radius: 10
   attackRadius: 5
   damage: 10
   animator: {fileID: 95457531584545886}
   attackDelay: 2
-  experience: 1000
+  experience: 300
   canCast: 0
   agent: {fileID: 5386170693205854143}
 --- !u!1 &2175033000305100478
