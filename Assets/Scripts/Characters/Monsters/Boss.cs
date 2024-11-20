@@ -25,7 +25,7 @@ public class Boss : Enemy
     public override IEnumerator CastSpell(GameObject enemy)
     {
         agent.ResetPath();
-        animator.SetBool(animations[2], true);
+        animator.SetBool(animations[4], true);
         float startingLife = life;
 
         Character enemyCharacter = enemy.GetComponentInParent<Character>();
@@ -39,8 +39,8 @@ public class Boss : Enemy
 
             if (_casting > 60)
             {
-                animator.SetBool(animations[2], false);
-                animator.SetTrigger(animations[3]);
+                animator.SetBool(animations[4], false);
+                animator.SetTrigger(animations[5]);
             }
             Quaternion nextRotation = Quaternion.LookRotation(enemy.transform.position - transform.position);
             nextRotation.x = transform.rotation.x;
@@ -53,7 +53,7 @@ public class Boss : Enemy
         if (enemyCharacter != null)
             enemyCharacter.BeingTargeted(false);
 
-        animator.SetBool(animations[2], false);
+        animator.SetBool(animations[4], false);
 
         if (startingLife > life || enemy == null)
         {

@@ -61,7 +61,6 @@ public class CursorManager : MonoBehaviour
         position.y += 0.1f;
         prevPosArrows = Instantiate(nextPosArrows, position, Quaternion.identity);
         prevPosArrows.transform.Rotate(new Vector3(90,0));
-        
     }
     public void DestroyArrows()
     {

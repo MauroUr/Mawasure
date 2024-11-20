@@ -66,11 +66,16 @@ public class Enemy : Character
     public override void TakeDamage(float damage)
     {
         base.TakeDamage(damage);
-
+        animator.ResetTrigger(animations[2]);
+        animator.SetTrigger(animations[2]);
         if (life <= 0)
         {
             Experience.Instance.AddXP(experience);
-            Destroy(gameObject);
+            animator.ResetTrigger(animations[2]);
+            animator.SetBool(animations[3], true);
+            healthBar.gameObject.SetActive(false);
+            agent.ResetPath();
+            this.enabled = false;
         }
         else
         {
@@ -83,6 +88,8 @@ public class Enemy : Character
             StartCoroutine(HandleAngerMode());
         }
     }
+
+    public void DestroySelf() { Destroy(gameObject); }
     private IEnumerator HandleAngerMode()
     {
         isAngry = true;

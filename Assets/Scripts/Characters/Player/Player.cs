@@ -158,7 +158,7 @@ public class Player : Character
 
         if (Vector3.Distance(transform.position, _nextPosition) > positionThreshold)
         {
-            _animator.SetBool(animations[2], true);
+            _animator.SetBool(animations[3], true);
             _nextPosition.y = transform.position.y;
             transform.position = Vector3.MoveTowards(transform.position, _nextPosition, Time.deltaTime * this.movSpeed);
             if (rotationCoroutine != null)
@@ -171,7 +171,7 @@ public class Player : Character
 
     private void ArrivedToNextPosition()
     {
-        _animator.SetBool(animations[2], false);
+        _animator.SetBool(animations[3], false);
         CursorManager.instance.DestroyArrows();
     }
 
@@ -237,6 +237,11 @@ public class Player : Character
                 ray = Camera.main.ScreenPointToRay(Mouse.current.position.ReadValue());
                 CursorManager.instance.ChangeCursor(CursorManager.CursorTypes.Basic);
                 break;
+            }
+            else if (Input.GetMouseButtonDown(1))
+            {
+                CursorManager.instance.ChangeCursor(CursorManager.CursorTypes.Basic);
+                yield break;
             }
             yield return null;
         }
@@ -326,7 +331,11 @@ public class Player : Character
             cameraFollow.Rotate(0, rotationX, 0, Space.World);
         }
     }
-
+    public override void TakeDamage(float damage)
+    {
+        base.TakeDamage(damage);
+        _animator.SetTrigger(animations[2]);
+    }
     private void RegenerateMana()
     {
         if (manaBar.value < 100)
