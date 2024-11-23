@@ -16,7 +16,9 @@ public class Player : Character
     private InputAction _statsPanelAction;
     private InputAction _lookAction;
     private InputAction _mouseWheelPressAction;
-    
+    private InputAction _showCheatConsole;
+    private InputAction _enterCheat;
+
     private bool _isRotating = false;
     [SerializeField] private float rotationSpeed;
     [SerializeField] private Transform cameraFollow;
@@ -37,6 +39,8 @@ public class Player : Character
 
     public event Action OnStatsPressed;
     public event Action OnSpellUIPressed;
+    public event Action OnCheatPressed;
+    public event Action OnEnterPressed;
 
     private Coroutine rotationCoroutine;
 
@@ -54,6 +58,8 @@ public class Player : Character
         _statsPanelAction = _inputs.actions["Stats"];
         _lookAction = _inputs.actions["Look"];
         _mouseWheelPressAction = _inputs.actions["MouseWheelPress"];
+        _showCheatConsole = _inputs.actions["CheatConsole"];
+        _enterCheat = _inputs.actions["EnterCheat"];
 
         Cursor.visible = true;
     }
@@ -94,6 +100,8 @@ public class Player : Character
         _spellsUIAction.performed += _ => OnSpellUIPressed?.Invoke();
         _mouseWheelPressAction.performed += _ => _isRotating = true;
         _mouseWheelPressAction.canceled += _ => _isRotating = false;
+        _showCheatConsole.performed += _ => OnCheatPressed?.Invoke();
+        _enterCheat.performed += _ => OnEnterPressed?.Invoke();
     }
 
     private void OnDisable()
@@ -105,6 +113,8 @@ public class Player : Character
         _spellsUIAction.performed -= _ => OnSpellUIPressed?.Invoke();
         _mouseWheelPressAction.performed -= _ => _isRotating = true;
         _mouseWheelPressAction.canceled -= _ => _isRotating = false;
+        _showCheatConsole.performed -= _ => OnCheatPressed?.Invoke();
+        _enterCheat.performed -= _ => OnEnterPressed?.Invoke();
     }
     #endregion
 
@@ -351,5 +361,11 @@ public class Player : Character
     {
         if (manaBar.value < 100)
             manaBar.value += 0.02f * stats.intelligence;
+    }
+
+    public void SetHealth(int health)
+    {
+        life = health;
+        healthBar.value = health;
     }
 }

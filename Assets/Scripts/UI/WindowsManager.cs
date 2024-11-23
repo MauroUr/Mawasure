@@ -1,7 +1,7 @@
+using System;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
-using static UnityEngine.CullingGroup;
 
 public class WindowsManager : MonoBehaviour
 {
@@ -49,9 +49,20 @@ public class WindowsManager : MonoBehaviour
 
     public void ToggleStatsPanel()
     {
+        CheckOnPlayerStats();
         statsPanel.SetActive(!statsPanel.activeSelf);
         if (statsPanel.activeSelf)
             Cancel();
+    }
+
+    private void CheckOnPlayerStats()
+    {
+        stats[0].text = player.stats.strength.ToString();
+        stats[1].text = player.stats.dexterity.ToString();
+        stats[2].text = player.stats.agility.ToString();
+        stats[3].text = player.stats.intelligence.ToString();
+        stats[4].text = player.stats.vitality.ToString();
+        stats[5].text = player.stats.luck.ToString();
     }
 
     public void ToggleSpellsPanel()
@@ -168,7 +179,7 @@ public class WindowsManager : MonoBehaviour
     }
     public void StatIncrease(TextMeshProUGUI statChanged)
     {
-        if (statPointsToAssign.text == "0") return;
+        if (statPointsToAssign.text == "0" || statChanged.text == "99") return;
         TrackAndModifyStat(statsBeforeApply, statChanged, 1);
         statPointsIncreased++;
     }
@@ -210,5 +221,10 @@ public class WindowsManager : MonoBehaviour
         }
 
         return hasApplied;
+    }
+
+    public void SetSpellPoints(string points)
+    {
+        spellPointsToAssign.text = points;
     }
 }

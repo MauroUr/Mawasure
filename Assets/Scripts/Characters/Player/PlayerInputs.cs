@@ -89,6 +89,24 @@ public partial class @PlayerInputs: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""CheatConsole"",
+                    ""type"": ""Button"",
+                    ""id"": ""37c581f1-995b-4491-b5db-24ad94348e8d"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""EnterCheat"",
+                    ""type"": ""Button"",
+                    ""id"": ""f139f0ba-46e8-4fdb-af50-ba75a048d108"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -355,6 +373,50 @@ public partial class @PlayerInputs: IInputActionCollection2, IDisposable
                     ""action"": ""Look"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""One Modifier"",
+                    ""id"": ""af05a476-cff3-4bee-9fcb-7f136b9d0b4b"",
+                    ""path"": ""OneModifier"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""CheatConsole"",
+                    ""isComposite"": true,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""modifier"",
+                    ""id"": ""d6b644fc-4b30-4f0c-b79a-231403eb27b3"",
+                    ""path"": ""<Keyboard>/ctrl"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""CheatConsole"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""binding"",
+                    ""id"": ""bab84a5e-1fd9-42ed-b660-28274d55b266"",
+                    ""path"": ""<Keyboard>/c"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""CheatConsole"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""ae5c71d3-d97e-4d38-80db-65a7a17d7fbd"",
+                    ""path"": ""<Keyboard>/enter"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""EnterCheat"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -370,6 +432,8 @@ public partial class @PlayerInputs: IInputActionCollection2, IDisposable
         m_Gameplay_Equipment = m_Gameplay.FindAction("Equipment", throwIfNotFound: true);
         m_Gameplay_MouseWheelPress = m_Gameplay.FindAction("MouseWheelPress", throwIfNotFound: true);
         m_Gameplay_Look = m_Gameplay.FindAction("Look", throwIfNotFound: true);
+        m_Gameplay_CheatConsole = m_Gameplay.FindAction("CheatConsole", throwIfNotFound: true);
+        m_Gameplay_EnterCheat = m_Gameplay.FindAction("EnterCheat", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -438,6 +502,8 @@ public partial class @PlayerInputs: IInputActionCollection2, IDisposable
     private readonly InputAction m_Gameplay_Equipment;
     private readonly InputAction m_Gameplay_MouseWheelPress;
     private readonly InputAction m_Gameplay_Look;
+    private readonly InputAction m_Gameplay_CheatConsole;
+    private readonly InputAction m_Gameplay_EnterCheat;
     public struct GameplayActions
     {
         private @PlayerInputs m_Wrapper;
@@ -449,6 +515,8 @@ public partial class @PlayerInputs: IInputActionCollection2, IDisposable
         public InputAction @Equipment => m_Wrapper.m_Gameplay_Equipment;
         public InputAction @MouseWheelPress => m_Wrapper.m_Gameplay_MouseWheelPress;
         public InputAction @Look => m_Wrapper.m_Gameplay_Look;
+        public InputAction @CheatConsole => m_Wrapper.m_Gameplay_CheatConsole;
+        public InputAction @EnterCheat => m_Wrapper.m_Gameplay_EnterCheat;
         public InputActionMap Get() { return m_Wrapper.m_Gameplay; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -479,6 +547,12 @@ public partial class @PlayerInputs: IInputActionCollection2, IDisposable
             @Look.started += instance.OnLook;
             @Look.performed += instance.OnLook;
             @Look.canceled += instance.OnLook;
+            @CheatConsole.started += instance.OnCheatConsole;
+            @CheatConsole.performed += instance.OnCheatConsole;
+            @CheatConsole.canceled += instance.OnCheatConsole;
+            @EnterCheat.started += instance.OnEnterCheat;
+            @EnterCheat.performed += instance.OnEnterCheat;
+            @EnterCheat.canceled += instance.OnEnterCheat;
         }
 
         private void UnregisterCallbacks(IGameplayActions instance)
@@ -504,6 +578,12 @@ public partial class @PlayerInputs: IInputActionCollection2, IDisposable
             @Look.started -= instance.OnLook;
             @Look.performed -= instance.OnLook;
             @Look.canceled -= instance.OnLook;
+            @CheatConsole.started -= instance.OnCheatConsole;
+            @CheatConsole.performed -= instance.OnCheatConsole;
+            @CheatConsole.canceled -= instance.OnCheatConsole;
+            @EnterCheat.started -= instance.OnEnterCheat;
+            @EnterCheat.performed -= instance.OnEnterCheat;
+            @EnterCheat.canceled -= instance.OnEnterCheat;
         }
 
         public void RemoveCallbacks(IGameplayActions instance)
@@ -530,5 +610,7 @@ public partial class @PlayerInputs: IInputActionCollection2, IDisposable
         void OnEquipment(InputAction.CallbackContext context);
         void OnMouseWheelPress(InputAction.CallbackContext context);
         void OnLook(InputAction.CallbackContext context);
+        void OnCheatConsole(InputAction.CallbackContext context);
+        void OnEnterCheat(InputAction.CallbackContext context);
     }
 }

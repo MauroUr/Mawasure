@@ -16685,7 +16685,7 @@ PrefabInstance:
     - target: {fileID: 291198315078064896, guid: 2477f1925337568479938d135074d127,
         type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 906712773252517098, guid: 2477f1925337568479938d135074d127,
         type: 3}
@@ -16836,6 +16836,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Layer
       value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 8699514858101946610, guid: 2477f1925337568479938d135074d127,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -21912,6 +21917,11 @@ PrefabInstance:
       propertyPath: m_Layer
       value: 8
       objectReference: {fileID: 0}
+    - target: {fileID: 8699514858101946610, guid: 2477f1925337568479938d135074d127,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 5175657649544491436, guid: 2477f1925337568479938d135074d127, type: 3}
     m_RemovedGameObjects: []
@@ -26929,6 +26939,7 @@ GameObject:
   - component: {fileID: 1229360537}
   - component: {fileID: 1229360536}
   - component: {fileID: 1229360535}
+  - component: {fileID: 1229360540}
   m_Layer: 5
   m_Name: HUD
   m_TagString: Untagged
@@ -27047,6 +27058,26 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0}
+--- !u!114 &1229360540
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1229360534}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6f79b27c609aeff4ea141fcfd650377c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  commands:
+  - {fileID: 11400000, guid: 0622a7de61fad8e4dbae8bcb9899357f, type: 2}
+  - {fileID: 11400000, guid: 10c91bf6428615d44a92a726f91ba767, type: 2}
+  - {fileID: 11400000, guid: 800d4687089af9043a6d364b1f38dbbe, type: 2}
+  - {fileID: 11400000, guid: 5b54382f145949a4f996db52b8e16745, type: 2}
+  - {fileID: 11400000, guid: 08865654bf952fb4b93668e4c124c659, type: 2}
+  - {fileID: 11400000, guid: a246d48c32a64ac4594e23d0b619216a, type: 2}
+  player: {fileID: 2050022534}
 --- !u!1 &1231842425
 GameObject:
   m_ObjectHideFlags: 0
