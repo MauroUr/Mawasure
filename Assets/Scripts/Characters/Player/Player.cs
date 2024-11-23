@@ -251,7 +251,7 @@ public class Player : Character
 
         if (Physics.Raycast(ray, out RaycastHit hit))
         {
-            const float clickRadius = 2f;
+            const float clickRadius = 4f;
             Collider[] hitColliders = Physics.OverlapSphere(hit.point, clickRadius, LayerMask.GetMask("Enemy"));
             Collider closestEnemy = GetClosestEnemy(hit.point, hitColliders);
 

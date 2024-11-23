@@ -59,7 +59,7 @@ public class CursorManager : MonoBehaviour
     public void SetNextPosition(Vector3 position, Transform playerTF)
     {
         DestroyArrows();
-        position.y += 0.1f;
+        position.y = 0.1f;
         prevPosArrows = Instantiate(nextPosArrows, position, Quaternion.identity);
         prevPosArrows.transform.Rotate(new Vector3(90,0));
         scaleArrows = StartCoroutine(ScaleArrows(playerTF));

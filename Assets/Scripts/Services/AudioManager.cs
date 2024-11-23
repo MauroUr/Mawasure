@@ -1,27 +1,13 @@
-using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 
-public class AudioManager : MonoBehaviour
+public class AudioManager : Service
 {
-    public static AudioManager instance;
     private AudioSource audioSource;
     private Dictionary<string, AudioClip> audioClips;
 
     private void Start()
     {
-        if (instance == null)
-        {
-            instance = this;
-            DontDestroyOnLoad(gameObject);
-        }
-        else
-        {
-            Destroy(gameObject);
-            return;
-        }
-
         audioSource = GetComponent<AudioSource>();
         LoadAudioClips();
     }
