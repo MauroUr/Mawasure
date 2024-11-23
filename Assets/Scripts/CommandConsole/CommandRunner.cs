@@ -1,10 +1,11 @@
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class CommandRunner : MonoBehaviour
 {
     [SerializeField] private List<Command> commands;
-    private string arguments;
+    private string arguments = "";
 
     [SerializeField] private Player player;
     public Player Player => player;
@@ -34,14 +35,14 @@ public class CommandRunner : MonoBehaviour
         if (!showConsole) { return; }
 
         float boxWidth = (Screen.width / 10) * 4;
-        float boxHeight = 130;
+        float boxHeight = 200;
         float xPosition = 10;
         float bottomMargin = 100;
         float yPosition = Screen.height - boxHeight - bottomMargin;
 
         GUI.Box(new Rect(xPosition, yPosition, boxWidth, boxHeight), "");
 
-        float logHeight = 100;
+        float logHeight = boxHeight - 30;
         Rect viewport = new Rect(0, 0, boxWidth - 30, 20 * logs.Count);
         scroll = GUI.BeginScrollView(new Rect(xPosition, yPosition + 5f, boxWidth, logHeight), scroll, viewport);
 
@@ -60,30 +61,59 @@ public class CommandRunner : MonoBehaviour
 
     private void HandleInput()
     {
-        string[] args = arguments.Split(' ');
+        string[] args = arguments.ToLower().Split(' ');
+        bool commandExecuted = false;
 
-        if (args[0] == "h" || args[0] == "help")
-            HandleHelp();
-        else
+        if (string.IsNullOrEmpty(args[0]))
         {
-
-            foreach (Command command in commands)
-            {
-                if (command != null)
-                {
-                    foreach (string alias in command.Aliases)
-                    {
-                        if (alias == args[0].ToLower())
-                            if (args.Length > 1)
-                                command.Execute(args, logs);
-                            else
-                                command.Execute(logs);
-                    }
-                }
-            }
+            logs.Add("Please type a valid command, or type 'help' to read all commands.");
+            commandExecuted = true;
         }
+        else if (args[0] == "h" || args[0] == "help")
+        {
+            HandleHelp();
+            commandExecuted = true;
+        }
+        else if (args[0] == "aliases")
+        {
+            commandExecuted = true;
+            if (args.Length == 1 || string.IsNullOrEmpty(args[1]))
+                logs.Add("Please specify which command you wish to know aliases of.");
+            else
+                HandleAliases(args[1]);
+        }
+        else
+            foreach (Command command in commands)
+                foreach (string alias in command.Aliases)
+                    if (alias == args[0])
+                    {
+                        commandExecuted = true;
+                        if (args.Length > 1)
+                            command.Execute(args, logs);
+                        else
+                            command.Execute(logs);
+                    }
+        
+        if (!commandExecuted)
+            logs.Add("Please type a valid command, or type 'help' to read all commands.");
+        
         arguments = "";
         ScrollToBottom();
+    }
+
+    private void HandleAliases(string name)
+    {
+        foreach (Command command in commands)
+            if (name == command.Aliases[0]) 
+            {
+                string[] aliases = new string[command.Aliases.Count];
+                command.Aliases.CopyTo(aliases);
+                aliases[0] = "";
+                string aliasesString = string.Join(" or ", aliases.Where(alias => !string.IsNullOrEmpty(alias)));
+                logs.Add($"Command '{name}' can also be called as {aliasesString} ");
+                return;
+            }
+        logs.Add("There is no command with that name.");
     }
 
     private void HandleHelp()
@@ -91,6 +121,7 @@ public class CommandRunner : MonoBehaviour
         foreach(Command command in commands)
             logs.Add($"Type '{command.Aliases[0]}' to {command.Description}");
 
+        logs.Add("Type 'aliases' and the name of a command to show all his aliases.");
         ScrollToBottom();
     }
     private void ScrollToBottom()

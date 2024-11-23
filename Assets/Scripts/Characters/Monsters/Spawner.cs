@@ -63,7 +63,7 @@ public class Spawner : MonoBehaviour
         );
 
         UnityEngine.AI.NavMeshHit hit;
-        if (UnityEngine.AI.NavMesh.SamplePosition(randomPosition, out hit, 1f, UnityEngine.AI.NavMesh.AllAreas))
+        if (UnityEngine.AI.NavMesh.SamplePosition(randomPosition, out hit, 2f, UnityEngine.AI.NavMesh.AllAreas))
             newEnemy.transform.position = hit.position;
         else
             Debug.LogWarning("Failed to relocate enemy to a valid NavMesh position!");
