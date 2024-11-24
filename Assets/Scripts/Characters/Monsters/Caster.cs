@@ -10,6 +10,7 @@ public class Caster : Enemy
     [SerializeField] protected float castingSpeed;
     protected ISpells _spellInstance;
 
+    float lifeWhileCasting;
     private Character _currentEnemy;
     
     protected override void Start()
@@ -21,11 +22,11 @@ public class Caster : Enemy
     {
         agent.ResetPath();
         animator.SetBool(animations[4], true);
-        float startingLife = life;
 
+        lifeWhileCasting = life;
         _currentEnemy = enemy.GetComponentInParent<Character>();
 
-        while (_casting < 100 && startingLife <= life)
+        while (_casting < 100 && lifeWhileCasting <= life)
         {
             this.ShowCastingCircle();
             if (_currentEnemy != null)
@@ -40,21 +41,25 @@ public class Caster : Enemy
         }
 
         animator.SetBool(animations[4], false);
-        animator.SetTrigger(animations[5]);
         _casting = 0;
         
-        if (startingLife > life || enemy == null)
+        if (lifeWhileCasting > life || enemy == null)
         {
             this.ChangeState(new Idle(this));
+            this.HideCastingCircle();
+            if (_currentEnemy != null)
+                _currentEnemy.BeingTargeted(false);
             yield break;
         }
 
+        animator.SetTrigger(animations[5]);
         animator.ResetTrigger(animations[2]);
 
     }
     protected void ThrowSpell()
     {
-        SpellController.Cast(_spellInstance, transform, _currentEnemy.transform, casterInt);
+        if (!(lifeWhileCasting > life))
+            SpellController.Cast(_spellInstance, transform, _currentEnemy.transform, casterInt);
         this.ChangeState(new Idle(this));
 
         this.HideCastingCircle();
