@@ -15,11 +15,12 @@ public class Cast : State
     {
         if (castCoroutine != null)
             enemy.StopCoroutine(castCoroutine);
+
         return;
     }
 
     public override void Tick()
     {
-        return;
+        
     }
 }

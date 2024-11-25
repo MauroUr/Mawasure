@@ -28,8 +28,7 @@ public class Enemy : Character
         isAngry = false;
         agent = GetComponent<NavMeshAgent>();
         attackRadius = agent.stoppingDistance;
-        currentState = new Idle(this);
-        currentState.Enter(currentState);
+        EvaluateStateChange();
     }
 
     protected virtual void LateUpdate()
@@ -84,17 +83,37 @@ public class Enemy : Character
             }
             else
             {
-                if (playerFound == null)
-                {
-                    playerFound = Physics.OverlapSphere(transform.position, 100, 1 << 3).FirstOrDefault();
-                    ChangeState(new Melee(this));
-                }
                 StopCoroutine(nameof(HandleAngerMode));
                 StartCoroutine(HandleAngerMode());
+                if (playerFound == null)
+                {
+                    TryFindPlayer();
+                    EvaluateStateChange();
+                }
             }
         }
         
     }
+    public void EvaluateStateChange()
+    {
+        if (playerFound == null)
+            ChangeState(new Idle(this));
+        else if (canCast && Random.Range(0, 6) == 0)
+            ChangeState(new Cast(this));
+        else
+            ChangeState(new Melee(this));
+    }
+
+    public bool TryFindPlayer()
+    {
+        if(isAngry)
+            playerFound = Physics.OverlapSphere(transform.position, 100, 1 << LayerMask.NameToLayer("Player")).FirstOrDefault();
+        else
+            playerFound = Physics.OverlapSphere(transform.position, radius, 1 << LayerMask.NameToLayer("Player")).FirstOrDefault();
+
+        return playerFound != null;
+    }
+
 
     public virtual void DestroySelf() { Destroy(gameObject); }
     private IEnumerator HandleAngerMode()

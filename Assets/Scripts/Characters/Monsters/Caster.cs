@@ -45,7 +45,7 @@ public class Caster : Enemy
         
         if (lifeWhileCasting > life || enemy == null)
         {
-            this.ChangeState(new Idle(this));
+            this.EvaluateStateChange();
             this.HideCastingCircle();
             if (_currentEnemy != null)
                 _currentEnemy.BeingTargeted(false);
@@ -60,11 +60,11 @@ public class Caster : Enemy
     {
         if (!(lifeWhileCasting > life))
             SpellController.Cast(_spellInstance, transform, _currentEnemy.transform, casterInt);
-        this.ChangeState(new Idle(this));
 
         this.HideCastingCircle();
         if (_currentEnemy != null)
             _currentEnemy.BeingTargeted(false);
 
+        this.EvaluateStateChange();
     }
 }

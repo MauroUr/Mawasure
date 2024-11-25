@@ -6,7 +6,7 @@ public class PlayerStatSetter : Command
 {
     public override void Execute(List<string> logs)
     {
-        logs.Add("This command requires at least 1 argument.");
+        logs.Add("This command requires at least 2 arguments.");
     }
 
     public override void Execute(string[] args, List<string> logs)

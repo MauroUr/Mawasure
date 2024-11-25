@@ -67,4 +67,5 @@ public class Melee : State
             enemy.agent.SetDestination(enemy.playerFound.gameObject.transform.position);
         }
     }
+
 }

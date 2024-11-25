@@ -1,8 +1,6 @@
 using UnityEngine;
 using UnityEngine.AI;
 using System.Collections;
-using System.Linq;
-
 public class Idle : State
 {
     private bool isIdleAfterRoam = false;
@@ -37,16 +35,11 @@ public class Idle : State
     {
         while (true)
         {
-            enemy.playerFound = Physics.OverlapSphere(enemy.transform.position, enemy.radius, 1 << 3).FirstOrDefault();
-
-            if (enemy.playerFound != null)
+            if (enemy.TryFindPlayer())
             {
                 if (enemy.currentState is not Melee && enemy.currentState is not Cast)
                 {
-                    if (Random.Range(0, 6) == 0 && enemy.canCast)
-                        enemy.ChangeState(new Cast(enemy));
-                    else
-                        enemy.ChangeState(new Melee(enemy));
+                    enemy.EvaluateStateChange();
 
                     yield break;
                 }
