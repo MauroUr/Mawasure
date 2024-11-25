@@ -31,6 +31,7 @@ public class Caster : Enemy
             this.ShowCastingCircle();
             if (_currentEnemy != null)
                 _currentEnemy.BeingTargeted(true);
+
             _casting += 20 / (_spellInstance.Level * _spellInstance.CastDelayPerLevel) * Time.deltaTime * castingSpeed;
 
             Quaternion nextRotation = Quaternion.LookRotation(_currentEnemy.transform.position - transform.position);

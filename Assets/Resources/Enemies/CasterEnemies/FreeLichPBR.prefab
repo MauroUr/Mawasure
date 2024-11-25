@@ -502,6 +502,8 @@ MonoBehaviour:
   agent: {fileID: -1765748290559484539}
   spell: {fileID: 11400000, guid: f2d0749545417a64c8a7e10db7ca826b, type: 2}
   spellLevel: 1
+  casterInt: 1
+  castingSpeed: 1
 --- !u!65 &5820597557116488409
 BoxCollider:
   m_ObjectHideFlags: 0
