@@ -37,7 +37,7 @@ public class CommandRunner : MonoBehaviour
         float boxWidth = (Screen.width / 10) * 4;
         float boxHeight = 200;
         float xPosition = 10;
-        float bottomMargin = 100;
+        float bottomMargin = Screen.height/6;
         float yPosition = Screen.height - boxHeight - bottomMargin;
 
         GUI.Box(new Rect(xPosition, yPosition, boxWidth, boxHeight), "");
