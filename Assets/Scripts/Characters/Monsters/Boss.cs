@@ -9,8 +9,7 @@ public class Boss : Caster
     protected override void Start()
     {
         base.Start();
-        currentState.Exit(currentState);
-        currentState = null;
+        fsm = null;
         agent.ResetPath();
         
     }
@@ -27,7 +26,6 @@ public class Boss : Caster
 
     protected void SetAwake() 
     {
-        this.ChangeState(new Idle(this));
         _isAwake = true;
         this.GetComponent<CapsuleCollider>().enabled = true;
     }

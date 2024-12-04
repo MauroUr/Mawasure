@@ -1,29 +1,30 @@
 using UnityEngine;
 using UnityEngine.AI;
 using System.Collections;
-public class Idle : State
+public class Idle<T> : State<T> where T : Enemy
 {
     private bool isIdleAfterRoam = false;
     private Coroutine lookForPlayerCoroutine;
     private Coroutine roamCoroutine;
 
-    public Idle(Enemy enemy) : base(enemy) { }
+    public Idle(T context, FiniteStateMachine<T> fsm) : base(context, fsm) { }
 
-    public override void Enter(State prevState)
+    public override void Enter(State<T> prevState)
     {
-        if (prevState is Melee || prevState is Cast)
-            enemy.radius /= 2;
+        if (prevState is Melee<T> || prevState is Cast<T>)
+            context.radius /= 2;
 
-        lookForPlayerCoroutine = enemy.StartCoroutine(LookForPlayer());
+        context.agent.ResetPath();
+        lookForPlayerCoroutine = context.StartCoroutine(LookForPlayer());
     }
 
-    public override void Exit(State nextState)
+    public override void Exit(State<T> nextState)
     {
         if (lookForPlayerCoroutine != null)
-            enemy.StopCoroutine(lookForPlayerCoroutine);
+            context.StopCoroutine(lookForPlayerCoroutine);
 
         if (roamCoroutine != null)
-            enemy.StopCoroutine(roamCoroutine);
+            context.StopCoroutine(roamCoroutine);
     }
 
     public override void Tick()
@@ -35,19 +36,12 @@ public class Idle : State
     {
         while (true)
         {
-            if (enemy.TryFindPlayer())
-            {
-                if (enemy.currentState is not Melee && enemy.currentState is not Cast)
-                {
-                    enemy.EvaluateStateChange();
+            context.TryFindPlayer();
 
-                    yield break;
-                }
-            }
-            else if (!isIdleAfterRoam && Random.Range(0, 5) == 0 && !enemy.agent.pathPending)
+            if (!isIdleAfterRoam && Random.Range(0, 5) == 0 && !context.agent.pathPending)
             {
                 if (roamCoroutine == null)
-                    roamCoroutine = enemy.StartCoroutine(Roam());
+                    roamCoroutine = context.StartCoroutine(Roam());
             }
 
             yield return new WaitForSeconds(0.3f);
@@ -56,22 +50,22 @@ public class Idle : State
 
     private IEnumerator Roam()
     {
-        enemy.animator.SetBool(enemy.animations[0], true);
+        context.animator.SetBool(context.animations[0], true);
 
-        float minRoamDistance = enemy.radius / 2;
-        float maxRoamDistance = enemy.radius;
+        float minRoamDistance = context.radius / 2;
+        float maxRoamDistance = context.radius;
         Vector2 randomDirection = UnityEngine.Random.insideUnitCircle.normalized * UnityEngine.Random.Range(minRoamDistance, maxRoamDistance);
 
-        Vector3 roamPosition = new Vector3(randomDirection.x, 0, randomDirection.y) + enemy.transform.position;
+        Vector3 roamPosition = new Vector3(randomDirection.x, 0, randomDirection.y) + context.transform.position;
 
         if (NavMesh.SamplePosition(roamPosition, out NavMeshHit hit, maxRoamDistance, NavMesh.AllAreas))
         {
-            enemy.agent.SetDestination(hit.position);
+            context.agent.SetDestination(hit.position);
             isIdleAfterRoam = true;
 
-            yield return new WaitUntil(() => !enemy.agent.pathPending && enemy.agent.remainingDistance <= enemy.agent.stoppingDistance);
+            yield return new WaitUntil(() => !context.agent.pathPending && context.agent.remainingDistance <= context.agent.stoppingDistance);
 
-            enemy.animator.SetBool(enemy.animations[0], false);
+            context.animator.SetBool(context.animations[0], false);
             yield return new WaitForSeconds(5f);
 
             isIdleAfterRoam = false;

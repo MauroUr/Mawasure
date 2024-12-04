@@ -13,14 +13,15 @@ public class Enemy : Character
     [SerializeField] private float damage;
     [SerializeField] public Animator animator;
     [SerializeField] public float attackDelay;
-    
+
     [SerializeField] private float experience;
     [SerializeField] public bool canCast;
 
     public NavMeshAgent agent;
     public Collider playerFound { get; set; }
-    public State currentState { get; protected set; }
+    protected FiniteStateMachine<Enemy> fsm;
     public bool isAngry { get; private set; }
+    protected bool isCasting = false;
 
     protected override void Start()
     {
@@ -28,33 +29,40 @@ public class Enemy : Character
         isAngry = false;
         agent = GetComponent<NavMeshAgent>();
         attackRadius = agent.stoppingDistance;
-        EvaluateStateChange();
+
+        Idle<Enemy> idleState = new Idle<Enemy>(this, fsm);
+        Melee<Enemy> meleeState = new Melee<Enemy>(this, fsm);
+
+
+        List<State<Enemy>> states = new List<State<Enemy>>();
+        states.Add(idleState);
+        states.Add(meleeState);
+
+        fsm = new FiniteStateMachine<Enemy>(states);
+
+        Transitions<Enemy> meleeTransition = new Transitions<Enemy>(meleeState);
+        meleeTransition.AddCondition(() => playerFound);
+        meleeTransition.AddCondition(() => !isCasting);
+        fsm.AddTransition(meleeTransition);
+
+        Transitions<Enemy> idleTransition = new Transitions<Enemy>(idleState);
+        idleTransition.AddCondition(() =>
+        {
+            if (playerFound == null)
+                return false;
+
+            float distance = Vector3.Distance(playerFound.transform.position, transform.position);
+            return distance > radius && !isAngry;
+        });
+        fsm.AddTransition(idleTransition);
+
     }
 
     protected virtual void LateUpdate()
     {
         healthBar.gameObject.transform.rotation = Camera.main.transform.rotation;
 
-        currentState.Tick();
-    }
-
-    public void ChangeState(State s)
-    {
-        if (s is Cast && !canCast)
-            return;
-
-        if(currentState != null)
-            currentState.Exit(s);
-        
-        State prevState = currentState;
-        currentState = s;
-        currentState.Enter(prevState);
-
-    }
-
-    public virtual IEnumerator CastSpell(GameObject enemy)
-    {
-        throw new System.NotImplementedException("Cast method must be implemented in the subclass.");
+        fsm.Tick();
     }
 
     public void MakeDamage()
@@ -86,34 +94,23 @@ public class Enemy : Character
                 StopCoroutine(nameof(HandleAngerMode));
                 StartCoroutine(HandleAngerMode());
                 if (playerFound == null)
-                {
                     TryFindPlayer();
-                    EvaluateStateChange();
-                }
             }
         }
         
     }
-    public void EvaluateStateChange()
-    {
-        if (playerFound == null)
-            ChangeState(new Idle(this));
-        else if (canCast && Random.Range(0, 6) == 0)
-            ChangeState(new Cast(this));
-        else
-            ChangeState(new Melee(this));
-    }
 
     public bool TryFindPlayer()
     {
-        if(isAngry)
-            playerFound = Physics.OverlapSphere(transform.position, 100, 1 << LayerMask.NameToLayer("Player")).FirstOrDefault();
-        else
-            playerFound = Physics.OverlapSphere(transform.position, radius, 1 << LayerMask.NameToLayer("Player")).FirstOrDefault();
+        Collider potentialPlayer = Physics.OverlapSphere(transform.position, isAngry ? 100 : radius, 1 << LayerMask.NameToLayer("Player")).FirstOrDefault();
+
+        if (potentialPlayer == null && playerFound != null)
+            playerFound = null;
+        else if (potentialPlayer != null)
+            playerFound = potentialPlayer;
 
         return playerFound != null;
     }
-
 
     public virtual void DestroySelf() { Destroy(gameObject); }
     private IEnumerator HandleAngerMode()
@@ -122,4 +119,15 @@ public class Enemy : Character
         yield return new WaitForSeconds(5f);
         isAngry = false;
     }
+
+    public virtual IEnumerator CastSpell(GameObject enemy)
+    {
+        throw new System.NotImplementedException("Cast method must be implemented in the subclass.");
+    }
+
+    public virtual void CancelCasting()
+    {
+        throw new System.NotImplementedException("Cancel cast method must be implemented in the subclass.");
+    }
+
 }

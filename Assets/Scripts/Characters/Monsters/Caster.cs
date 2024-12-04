@@ -10,16 +10,40 @@ public class Caster : Enemy
     [SerializeField] protected float castingSpeed;
     protected ISpells _spellInstance;
 
-    float lifeWhileCasting;
+    private float lifeWhileCasting;
     private Character _currentEnemy;
-    
+    public bool shouldCast;
+
     protected override void Start()
     {
         base.Start();
+        Cast<Enemy> castState = new Cast<Enemy>(this, fsm);
+
+        Transitions<Enemy> castTransition = new Transitions<Enemy>(castState);
+        castTransition.AddCondition(() => canCast);
+        castTransition.AddCondition(() => playerFound);
+        castTransition.AddCondition(() => !isCasting);
+        castTransition.AddCondition(() => shouldCast);
+
+        fsm.AddState(castState);
+        fsm.AddTransition(castTransition);
+
+        StartCoroutine(RandomCasting());
         _spellInstance = new SpellInstanceWrapper(spell, spellLevel);
+    }
+    private IEnumerator RandomCasting() 
+    {
+        while (true)
+        {
+            if (Random.Range(0, 6) == 0)
+                shouldCast = true;
+            yield return new WaitForSeconds(6f);
+        }
     }
     public override IEnumerator CastSpell(GameObject enemy)
     {
+        isCasting = true;
+        agent.isStopped = true;
         agent.ResetPath();
         animator.SetBool(animations[4], true);
 
@@ -46,7 +70,6 @@ public class Caster : Enemy
         
         if (lifeWhileCasting > life || enemy == null)
         {
-            this.EvaluateStateChange();
             this.HideCastingCircle();
             if (_currentEnemy != null)
                 _currentEnemy.BeingTargeted(false);
@@ -55,7 +78,15 @@ public class Caster : Enemy
 
         animator.SetTrigger(animations[5]);
         animator.ResetTrigger(animations[2]);
+        shouldCast = false;
+        agent.isStopped = false;
+        isCasting = false;
+    }
 
+    public override void CancelCasting()
+    {
+        lifeWhileCasting = life * 2;
+        
     }
     protected void ThrowSpell()
     {
@@ -66,6 +97,6 @@ public class Caster : Enemy
         if (_currentEnemy != null)
             _currentEnemy.BeingTargeted(false);
 
-        this.EvaluateStateChange();
+        
     }
 }

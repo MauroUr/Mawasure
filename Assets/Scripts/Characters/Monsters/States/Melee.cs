@@ -1,41 +1,36 @@
 using System.Collections;
 using UnityEngine;
 
-public class Melee : State
+public class Melee<T> : State<T> where T : Enemy
 {
     private float lastAttack;
     private Coroutine changeCoroutine;
-    public Melee(Enemy enemy) : base(enemy) 
+    public Melee(T context, FiniteStateMachine<T> fsm) : base(context, fsm) 
     {
-        lastAttack = enemy.attackDelay+1f;
+        lastAttack = context.attackDelay+1f;
     }
 
-    public override void Enter(State prevState)
+    public override void Enter(State<T> prevState)
     {
-        enemy.animator.ResetTrigger(enemy.animations[2]);
-        if (prevState is Idle)
-            enemy.radius *= 2;
-        if(enemy.canCast)
-            changeCoroutine = enemy.StartCoroutine(ShouldChangeAttack());
+        context.animator.ResetTrigger(context.animations[2]);
+        if (prevState is Idle<Enemy>)
+            context.radius *= 2;
+        if(context.canCast)
+            changeCoroutine = context.StartCoroutine(ShouldChangeAttack());
     }
 
-    public override void Exit(State nextState)
+    public override void Exit(State<T> nextState)
     {
         if (changeCoroutine != null)
-            enemy.StopCoroutine(changeCoroutine);
+            context.StopCoroutine(changeCoroutine);
         return;
     }
     private IEnumerator ShouldChangeAttack()
     {
         while (true)
         {
-            if (lastAttack > enemy.attackDelay + 3f)
-            {
-                if (Random.Range(0, 6) == 0)
-                    enemy.ChangeState(new Cast(enemy));
-                else
-                    lastAttack = enemy.attackDelay + 0.01f;
-            }
+            if (lastAttack > context.attackDelay + 3f)
+                   lastAttack = context.attackDelay + 0.01f;
             
             yield return null;
         }
@@ -43,28 +38,28 @@ public class Melee : State
 
     public override void Tick()
     {
-        if (enemy.playerFound == null) return;
+        if (context.playerFound == null) return;
 
         lastAttack += Time.deltaTime;
 
-        float distance = Vector3.Distance(enemy.playerFound.transform.position, enemy.transform.position);
+        float distance = Vector3.Distance(context.playerFound.transform.position, context.transform.position);
 
-        if (distance > enemy.radius && !enemy.isAngry)
+        if (distance > context.radius && !context.isAngry)
         {
-            enemy.ChangeState(new Idle(enemy));
+            fsm.ChangeState(typeof(Idle<T>));
             return;
         }
 
-        if (distance < enemy.attackRadius && lastAttack > enemy.attackDelay)
+        if (distance < context.attackRadius && lastAttack > context.attackDelay)
         {
-            enemy.animator.SetTrigger(enemy.animations[1]);
+            context.animator.SetTrigger(context.animations[1]);
             lastAttack = 0;
-            enemy.animator.SetBool(enemy.animations[0], false);
+            context.animator.SetBool(context.animations[0], false);
         }
-        else if (distance > enemy.attackRadius)
+        else if (distance > context.attackRadius)
         {
-            enemy.animator.SetBool(enemy.animations[0], true);
-            enemy.agent.SetDestination(enemy.playerFound.gameObject.transform.position);
+            context.animator.SetBool(context.animations[0], true);
+            context.agent.SetDestination(context.playerFound.gameObject.transform.position);
         }
     }
 

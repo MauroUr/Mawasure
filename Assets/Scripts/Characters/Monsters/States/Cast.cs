@@ -1,26 +1,34 @@
+using Unity.VisualScripting;
 using UnityEngine;
 
-public class Cast : State
+public class Cast<T> : State<T> where T : Enemy
 {
     private Coroutine castCoroutine;
-    public Cast(Enemy enemy) : base(enemy) { }
-    public override void Enter(State prevState)
+    public Cast(T context, FiniteStateMachine<T> fsm) : base(context, fsm) { }
+    public override void Enter(State<T> prevState)
     {
-        if (prevState is Idle)
-            enemy.radius *= 2;
-        castCoroutine = enemy.StartCoroutine(enemy.CastSpell(enemy.playerFound.gameObject));
+        if (prevState is Idle<T>)
+            context.radius *= 2;
+
+        castCoroutine = context.StartCoroutine(context.CastSpell(context.playerFound.gameObject));
     }
 
-    public override void Exit(State nextState)
+    public override void Exit(State<T> nextState)
     {
         if (castCoroutine != null)
-            enemy.StopCoroutine(castCoroutine);
+            context.StopCoroutine(castCoroutine);
 
         return;
     }
 
     public override void Tick()
     {
-        
+        float distance = Vector3.Distance(context.playerFound.transform.position, context.transform.position);
+        if (distance > context.radius && !context.isAngry)
+        {
+            fsm.ChangeState(typeof(Idle<T>));
+            context.CancelCasting();
+            return;
+        }
     }
 }
