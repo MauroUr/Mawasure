@@ -1,12 +1,80 @@
 
+using System.Collections.Generic;
 using UnityEngine;
 
 public abstract class EnemyFactory : MonoBehaviour
 {
     protected GameObject[] prefabs;
-    public virtual Enemy SpawnEnemy()
+    protected ObjectPool<Enemy> pool = new ObjectPool<Enemy>();
+    [SerializeField] private List<Enemy> startingEnemies;
+
+    protected Enemy strongest;
+    protected Enemy weakest;
+
+    private void Start()
     {
-        GameObject instance = Instantiate(prefabs[Random.Range(0, prefabs.Length)]);
-        return instance.GetComponent<Enemy>();
+        foreach(Enemy enemy in startingEnemies)
+            enemy.OnDeath += () => pool.Register(enemy);
     }
+    public Enemy SpawnRandomEnemy()
+    {
+        if (pool.Count > 0)
+        {
+            Enemy inactiveEnemy = pool.FindInactive();
+            inactiveEnemy.gameObject.SetActive(true);
+            return inactiveEnemy;
+        }
+
+        GameObject instance = Instantiate(prefabs[Random.Range(0, prefabs.Length)]);
+        Enemy enemy = instance.GetComponent<Enemy>();
+        enemy.OnDeath += () => pool.Register(enemy);
+        return enemy;
+    }
+
+    public Enemy SpawnStrongEnemy()
+    {
+        FindStrongest();
+
+        if (pool.Count > 0)
+        {
+            Enemy inactiveEnemy = pool.SearchFor(EnemyIsStrongest);
+
+            if (inactiveEnemy != null)
+            {
+                inactiveEnemy.gameObject.SetActive(true);
+                return inactiveEnemy;
+            }
+        }
+
+        GameObject instance = Instantiate(strongest.gameObject);
+        Enemy enemy = instance.GetComponent<Enemy>();
+        enemy.OnDeath += () => pool.Register(enemy);
+        return enemy;
+    }
+
+    public Enemy SpawnWeakEnemy()
+    {
+        FindWeakest();
+
+        if (pool.Count > 0)
+        {
+            Enemy inactiveEnemy = pool.SearchFor(EnemyIsWeakest);
+
+            if (inactiveEnemy != null)
+            {
+                inactiveEnemy.gameObject.SetActive(true);
+                return inactiveEnemy;
+            }
+        }
+
+        GameObject instance = Instantiate(weakest.gameObject);
+        Enemy enemy = instance.GetComponent<Enemy>();
+        enemy.OnDeath += () => pool.Register(enemy);
+        return enemy;
+    }
+
+    protected abstract void FindStrongest();
+    protected abstract void FindWeakest();
+    public abstract bool EnemyIsStrongest(Enemy enemy);
+    public abstract bool EnemyIsWeakest(Enemy enemy);
 }

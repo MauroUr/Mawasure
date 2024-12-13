@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,28 +8,38 @@ using UnityEngine.AI;
 public class Enemy : Character
 {
     [SerializeField] public List<string> animations = new();
-    [SerializeField] public float radius;
-    public float attackRadius;
-
-    [SerializeField] private float damage;
+    [SerializeField] public EnemiesStats stats = new EnemiesStats();
     [SerializeField] public Animator animator;
-    [SerializeField] public float attackDelay;
-
-    [SerializeField] private float experience;
-    [SerializeField] public bool canCast;
-
     public NavMeshAgent agent;
     public Collider playerFound { get; set; }
     protected FiniteStateMachine<Enemy> fsm;
     public bool isAngry { get; private set; }
     protected bool isCasting = false;
+    public event Action OnDeath;
 
+    private void Awake()
+    {
+        StartCoroutine(CheckDuplicatedStats());
+    }
+
+    private IEnumerator CheckDuplicatedStats()
+    {
+        yield return null;
+        EnemiesStatsService statsService = ServiceLocator.instance.GetService<EnemiesStatsService>(typeof(EnemiesStatsService));
+        while (statsService == null)
+        {
+            yield return null;
+            statsService = ServiceLocator.instance.GetService<EnemiesStatsService>(typeof(EnemiesStatsService));
+        }
+
+        stats = statsService.CheckDuplicatedStats(this.animator.avatar.name, stats);
+    }
     protected override void Start()
     {
         base.Start();
         isAngry = false;
         agent = GetComponent<NavMeshAgent>();
-        attackRadius = agent.stoppingDistance;
+        stats.attackRadius = agent.stoppingDistance;
 
         Idle<Enemy> idleState = new Idle<Enemy>(this, fsm);
         Melee<Enemy> meleeState = new Melee<Enemy>(this, fsm);
@@ -52,7 +63,7 @@ public class Enemy : Character
                 return false;
 
             float distance = Vector3.Distance(playerFound.transform.position, transform.position);
-            return distance > radius && !isAngry;
+            return distance > stats.radius && !isAngry;
         });
         fsm.AddTransition(idleTransition);
 
@@ -67,7 +78,7 @@ public class Enemy : Character
 
     public void MakeDamage()
     {
-        playerFound.gameObject.GetComponentInParent<Character>().TakeDamage(damage);
+        playerFound.gameObject.GetComponentInParent<Character>().TakeDamage(stats.damage);
         animator.ResetTrigger(animations[2]);
     }
 
@@ -82,7 +93,7 @@ public class Enemy : Character
 
             if (life <= 0)
             {
-                Experience.Instance.AddXP(experience);
+                Experience.Instance.AddXP(stats.experience);
                 animator.ResetTrigger(animations[2]);
                 animator.SetBool(animations[3], true);
                 healthBar.gameObject.SetActive(false);
@@ -102,7 +113,7 @@ public class Enemy : Character
 
     public bool TryFindPlayer()
     {
-        Collider potentialPlayer = Physics.OverlapSphere(transform.position, isAngry ? 100 : radius, 1 << LayerMask.NameToLayer("Player")).FirstOrDefault();
+        Collider potentialPlayer = Physics.OverlapSphere(transform.position, isAngry ? 100 : stats.radius, 1 << LayerMask.NameToLayer("Player")).FirstOrDefault();
 
         if (potentialPlayer == null && playerFound != null)
             playerFound = null;
@@ -112,7 +123,10 @@ public class Enemy : Character
         return playerFound != null;
     }
 
-    public virtual void DestroySelf() { Destroy(gameObject); }
+    public virtual void DestroySelf() { 
+        OnDeath.Invoke();
+        this.gameObject.SetActive(false);
+    }
     private IEnumerator HandleAngerMode()
     {
         isAngry = true;

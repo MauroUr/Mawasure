@@ -8,7 +8,7 @@ public class Cast<T> : State<T> where T : Enemy
     public override void Enter(State<T> prevState)
     {
         if (prevState is Idle<T>)
-            context.radius *= 2;
+            context.stats.radius *= 2;
 
         castCoroutine = context.StartCoroutine(context.CastSpell(context.playerFound.gameObject));
     }
@@ -24,7 +24,7 @@ public class Cast<T> : State<T> where T : Enemy
     public override void Tick()
     {
         float distance = Vector3.Distance(context.playerFound.transform.position, context.transform.position);
-        if (distance > context.radius && !context.isAngry)
+        if (distance > context.stats.radius && !context.isAngry)
         {
             fsm.ChangeState(typeof(Idle<T>));
             context.CancelCasting();

@@ -11,11 +11,6 @@ public class Spawner : MonoBehaviour
     private void Start()
     {
         StartCoroutine(GetEnemyFactories());
-        
-        //_floorSquares.AddRange(floorList[0].GetComponentsInChildren<Transform>());
-        //_floorSquares.AddRange(floorList[1].GetComponentsInChildren<Transform>());
-        
-        //floorList.Clear();
     }
 
     private IEnumerator GetEnemyFactories()
@@ -34,13 +29,18 @@ public class Spawner : MonoBehaviour
 
     public void Spawn()
     {
+        if (Random.Range(0, 2) == 1)
+            allFactories[Random.Range(0, allFactories.Count)].SpawnStrongEnemy();
+        else
+            allFactories[Random.Range(0, allFactories.Count)].SpawnWeakEnemy();
+
         SpawnRandomEnemies(enemiesToSpawn);
     }
     private void SpawnRandomEnemies(int quantity)
     {
         for (int i = 0;i< quantity;i++)
         {
-            Enemy newEnemy = allFactories[Random.Range(0, allFactories.Count)].SpawnEnemy();
+            Enemy newEnemy = allFactories[Random.Range(0, allFactories.Count)].SpawnRandomEnemy();
             Relocate(newEnemy);
         }
     }

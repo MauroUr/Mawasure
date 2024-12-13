@@ -6,13 +6,13 @@ public class Caster : Enemy
     protected float _casting = 0;
     [SerializeField] protected Spells spell;
     [SerializeField] protected int spellLevel;
-    [SerializeField] protected int casterInt = 1;
+    [SerializeField] public int casterInt = 1;
     [SerializeField] protected float castingSpeed;
     protected ISpells _spellInstance;
 
     private float lifeWhileCasting;
     private Character _currentEnemy;
-    public bool shouldCast;
+    [HideInInspector] public bool shouldCast;
 
     protected override void Start()
     {
@@ -20,7 +20,7 @@ public class Caster : Enemy
         Cast<Enemy> castState = new Cast<Enemy>(this, fsm);
 
         Transitions<Enemy> castTransition = new Transitions<Enemy>(castState);
-        castTransition.AddCondition(() => canCast);
+        castTransition.AddCondition(() => stats.canCast);
         castTransition.AddCondition(() => playerFound);
         castTransition.AddCondition(() => !isCasting);
         castTransition.AddCondition(() => shouldCast);

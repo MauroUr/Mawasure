@@ -7,15 +7,15 @@ public class Melee<T> : State<T> where T : Enemy
     private Coroutine changeCoroutine;
     public Melee(T context, FiniteStateMachine<T> fsm) : base(context, fsm) 
     {
-        lastAttack = context.attackDelay+1f;
+        lastAttack = context.stats.attackDelay +1f;
     }
 
     public override void Enter(State<T> prevState)
     {
         context.animator.ResetTrigger(context.animations[2]);
         if (prevState is Idle<Enemy>)
-            context.radius *= 2;
-        if(context.canCast)
+            context.stats.radius *= 2;
+        if(context.stats.canCast)
             changeCoroutine = context.StartCoroutine(ShouldChangeAttack());
     }
 
@@ -29,8 +29,8 @@ public class Melee<T> : State<T> where T : Enemy
     {
         while (true)
         {
-            if (lastAttack > context.attackDelay + 3f)
-                   lastAttack = context.attackDelay + 0.01f;
+            if (lastAttack > context.stats.attackDelay + 3f)
+                   lastAttack = context.stats.attackDelay + 0.01f;
             
             yield return null;
         }
@@ -44,19 +44,19 @@ public class Melee<T> : State<T> where T : Enemy
 
         float distance = Vector3.Distance(context.playerFound.transform.position, context.transform.position);
 
-        if (distance > context.radius && !context.isAngry)
+        if (distance > context.stats.radius && !context.isAngry)
         {
             fsm.ChangeState(typeof(Idle<T>));
             return;
         }
 
-        if (distance < context.attackRadius && lastAttack > context.attackDelay)
+        if (distance < context.stats.attackRadius && lastAttack > context.stats.attackDelay)
         {
             context.animator.SetTrigger(context.animations[1]);
             lastAttack = 0;
             context.animator.SetBool(context.animations[0], false);
         }
-        else if (distance > context.attackRadius)
+        else if (distance > context.stats.attackRadius)
         {
             context.animator.SetBool(context.animations[0], true);
             context.agent.SetDestination(context.playerFound.gameObject.transform.position);

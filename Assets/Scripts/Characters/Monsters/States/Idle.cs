@@ -12,7 +12,7 @@ public class Idle<T> : State<T> where T : Enemy
     public override void Enter(State<T> prevState)
     {
         if (prevState is Melee<T> || prevState is Cast<T>)
-            context.radius /= 2;
+            context.stats.radius /= 2;
 
         context.agent.ResetPath();
         lookForPlayerCoroutine = context.StartCoroutine(LookForPlayer());
@@ -52,8 +52,8 @@ public class Idle<T> : State<T> where T : Enemy
     {
         context.animator.SetBool(context.animations[0], true);
 
-        float minRoamDistance = context.radius / 2;
-        float maxRoamDistance = context.radius;
+        float minRoamDistance = context.stats.radius / 2;
+        float maxRoamDistance = context.stats.radius;
         Vector2 randomDirection = UnityEngine.Random.insideUnitCircle.normalized * UnityEngine.Random.Range(minRoamDistance, maxRoamDistance);
 
         Vector3 roamPosition = new Vector3(randomDirection.x, 0, randomDirection.y) + context.transform.position;
