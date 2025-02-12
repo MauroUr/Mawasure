@@ -8,12 +8,11 @@ public class Boss : Caster
     [SerializeField] private GameObject winPanel;
     protected override void Start()
     {
-        base.Start();
-        fsm = null;
-        agent.ResetPath();
-        
+        healthBar.maxValue = life;
+        healthBar.value = life;
+        agent.ResetPath();   
     }
-    protected new void LateUpdate()
+    protected override void LateUpdate()
     {
         if (_isAwake)
             base.LateUpdate();
@@ -27,6 +26,8 @@ public class Boss : Caster
     protected void SetAwake() 
     {
         _isAwake = true;
+        FSMSetup();
+        CastSetup();
         this.GetComponent<CapsuleCollider>().enabled = true;
     }
 

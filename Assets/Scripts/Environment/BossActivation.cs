@@ -12,7 +12,5 @@ public class BossActivation : MonoBehaviour
             boss.AwakeBoss();
             Destroy(this.gameObject);
         }
-
-        
     }
 }
