@@ -5,7 +5,6 @@ using UnityEngine;
 public class Spells : ScriptableObject, ISpells
 {
     [SerializeField] private int id;
-    [HideInInspector] private int level;
     [SerializeField] private int dmgPerLevel;
     [SerializeField] private int manaPerLevel;
     [SerializeField] private float castDelayPerLevel;
@@ -16,7 +15,7 @@ public class Spells : ScriptableObject, ISpells
     [SerializeField] private ConditionalData conditionalData;
 
     public int Id => id;
-    public int Level { get => level; set => level = value; } 
+    public int Level => 0;
     public int DmgPerLevel => dmgPerLevel;
     public int ManaPerLevel => manaPerLevel;
     public float CastDelayPerLevel => castDelayPerLevel;

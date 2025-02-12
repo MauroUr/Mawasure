@@ -324,7 +324,6 @@ public class Player : Character
         if (Vector3.Distance(transform.position, _nextPosition) > 0.1f || startingLife > life || enemy == null)
             yield break;
 
-        _selectedSpells[spellNumber].Level = _selectedSpells[spellNumber].Level;
         SpellController.Cast(_selectedSpells[spellNumber], rotationTarget, enemy.transform, stats.intelligence);
 
         manaBar.value -= _selectedSpells[spellNumber].ManaPerLevel * _selectedSpells[spellNumber].Level;

@@ -3,7 +3,7 @@ using UnityEngine;
 public interface ISpells
 {
     int Id { get; }
-    int Level { get; set; }
+    int Level { get; }
     int DmgPerLevel { get; }
     int ManaPerLevel { get; }
     float CastDelayPerLevel { get; }

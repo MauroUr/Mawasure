@@ -22,47 +22,29 @@ public class SpellController : MonoBehaviour
         if(rotation != Quaternion.identity)
             this.transform.rotation = rotation * Quaternion.Euler(90, 0, 0);
     }
-    public static void Cast(ISpells spell,Transform playerTransform, Transform target, int playerInt)
+    public static void Cast(ISpells spell,Transform casterTransform, Transform target, int playerInt)
     {
-        Vector3 calculatedOffset = playerTransform.position +
-                               playerTransform.right * spell.Offset.x +
-                               playerTransform.up * spell.Offset.y +
-                               playerTransform.forward * spell.Offset.z;
-        spell.ConditionalData.strategy.Cast(spell, calculatedOffset, target, playerInt);
+        spell.ConditionalData.strategy.Cast(spell, target, playerInt, casterTransform);
     }
 
-    public static SpellController Instantiation(ISpells spell, Vector3 calculatedOffset)
+    public static SpellController Instantiation(ISpells spell , Transform casterTransform)
     {
-        
-        return Instantiate(spell.Prefab, calculatedOffset, Quaternion.identity).GetComponent<SpellController>();
-    }
-    public void MultiCast(Vector3 offSet)
-    {
-        StartCoroutine(Multicast(offSet));
-    }
-    private IEnumerator Multicast(Vector3 offSet)
-    {
-        yield return new WaitForSecondsRealtime(0.2f);
-        for (int i = 0; i < _currentSpell.Level - 1; i++)
-        {
-            //ProjectileFlyweight flyweight = FlyweightFactory.instance.GetProjectile(_currentSpell.Id);
+        Vector3 calculatedOffset = casterTransform.position +
+                               casterTransform.right * spell.Offset.x +
+                               casterTransform.up * spell.Offset.y +
+                               casterTransform.forward * spell.Offset.z;
 
-            GameObject spellInstance = Instantiate(_currentSpell.Prefab, offSet, Quaternion.identity);
-            SpellController controller = spellInstance.GetComponent<SpellController>();
+        SpellController controller = Instantiate(spell.Prefab, calculatedOffset, Quaternion.identity).GetComponent<SpellController>();
 
-            controller._currentSpell = _currentSpell;
-            controller._target = _target;
-            controller._playerInt = _playerInt;
+        Collider spellCollider = controller.gameObject.GetComponent<Collider>();
+        Collider casterCollider = casterTransform.GetComponent<Collider>();
 
-           // MeshRenderer mesh = spellInstance.GetComponent<MeshRenderer>();
-            //if (mesh != null)
-           // {
-             //   mesh.material = flyweight.material;
-            //    mesh.bounds.size.Set(flyweight.size.x, flyweight.size.y, flyweight.size.z);
-            //}
-            yield return new WaitForSecondsRealtime(0.2f);
-        }
+        if (spellCollider != null && casterCollider != null)
+            Physics.IgnoreCollision(spellCollider, casterCollider);
+
+        return controller;
     }
+
 
     private void OnTriggerEnter(Collider other)
     {

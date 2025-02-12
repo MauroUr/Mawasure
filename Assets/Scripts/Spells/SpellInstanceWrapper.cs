@@ -12,12 +12,8 @@ public class SpellInstanceWrapper : ISpells
     public int Level
     {
         get => instanceLevel;
-        set
-        {
-            if (spell != null)
-                spell.Level = value;
-        }
     }
+
     public int DmgPerLevel => spell.DmgPerLevel;
 
     public int ManaPerLevel => spell.ManaPerLevel;
