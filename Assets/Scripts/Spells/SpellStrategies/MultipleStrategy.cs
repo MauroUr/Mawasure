@@ -11,9 +11,14 @@ public class MultipleStrategy : SpellCastingStrategy
 
     private IEnumerator CastWithDelay(ISpells spell, Transform target, int playerInt, Transform casterTransform)
     {
+        Vector3 calculatedOffset = casterTransform.position +
+                               casterTransform.right * spell.Offset.x +
+                               casterTransform.up * spell.Offset.y +
+                               casterTransform.forward * spell.Offset.z;
+
         for (int i = 0; i < spell.Level; i++)
         {
-            SpellController controller = SpellController.Instantiation(spell, casterTransform);
+            SpellController controller = SpellController.Instantiation(spell, calculatedOffset, casterTransform);
 
             controller._target = target;
             controller._playerInt = playerInt;

@@ -1,44 +1,97 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
-public class Experience : MonoBehaviour
+public delegate void LevelUpEvent();
+
+[Serializable]
+public class Experience
 {
-    public static Experience Instance { get; private set; }
-    private float _experience;
-    private int _level;
-    public event Action OnLevelUp;
+    public event LevelUpEvent OnLevelUp = delegate { };
+    public event Action OnMaxLevelReached = delegate { };
 
-    private void Awake()
+    /// <summary>
+    /// Nivel máximo permitido (0 = sin límite)
+    /// </summary>
+    public int maxLevel { get; set; }
+
+    /// <summary>
+    /// Experiencia actual del jugador
+    /// </summary>
+    public float exp
     {
-        if (Instance == null)
+        get => _exp;
+        private set
         {
-            Instance = this;
+            float oldXP = _exp;
+            _exp = Mathf.Max(0, value);
         }
-        else
-        {
-            Destroy(gameObject);
-            return;
-        }
-
-        _experience = 0;
-        _level = Mathf.FloorToInt(1000 / 1000);
     }
 
-    public void AddXP(float experience)
+    /// <summary>
+    /// Nivel actual del jugador
+    /// </summary>
+    public int Level { get; private set; }
+
+    private const int EXP_NEEDED_PER_LEVEL = 1000;
+    private float _exp;
+
+    public Experience(int startLevel = 1, int maxLevel = 0)
     {
-        _experience += experience;
-        int prevLevel = _level;
-        int leveled = Mathf.FloorToInt(_experience / (1000*_level));
+        Level = startLevel;
+        this.maxLevel = maxLevel;
+        exp = 0;
+    }
 
-        if (leveled >= 1)
+    /// <summary>
+    /// Agrega experiencia y maneja subida de nivel.
+    /// </summary>
+    /// <param name="amount">Cantidad de experiencia a agregar</param>
+    public void AddXP(float amount)
+    {
+        if (amount < 0)
+            throw new ArgumentException("XP amount cannot be negative!");
+
+        float oldXP = exp;
+        exp += amount;
+
+        while (exp >= GetXPRequiredForLevel(Level))
         {
-            _experience -= 1000 * leveled;
-            _level += leveled;
-            for (int i = _level; i > prevLevel; i--)
-                OnLevelUp.Invoke();
-        }
+            if (maxLevel > 0 && Level >= maxLevel)
+            {
+                exp = 0;
+                OnMaxLevelReached.Invoke();
+                return;
+            }
 
+            exp -= GetXPRequiredForLevel(Level);
+            Level++;
+            OnLevelUp.Invoke();
+        }
+    }
+
+    /// <summary>
+    /// Devuelve la experiencia necesaria para subir al siguiente nivel.
+    /// </summary>
+    private float GetXPRequiredForLevel(int level)
+    {
+        return EXP_NEEDED_PER_LEVEL * level; // Puedes cambiar esto para usar una fórmula más avanzada
+    }
+
+    /// <summary>
+    /// Reinicia la experiencia a 0 y mantiene el nivel actual.
+    /// </summary>
+    public void ResetXP()
+    {
+        exp = 0;
+    }
+
+    /// <summary>
+    /// Reinicia toda la progresión a un nivel base.
+    /// </summary>
+    public void ResetProgression(int newLevel = 1)
+    {
+        Level = newLevel;
+        exp = 0;
     }
 }
+

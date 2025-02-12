@@ -15,7 +15,7 @@ public class Enemy : Character
     protected FiniteStateMachine<Enemy> fsm;
     public bool isAngry { get; private set; }
     protected bool isCasting = false;
-    public event Action OnDeath;
+    public event Action<float> OnDeath;
 
     private void Awake()
     {
@@ -97,7 +97,6 @@ public class Enemy : Character
 
             if (life <= 0)
             {
-                Experience.Instance.AddXP(stats.experience);
                 animator.ResetTrigger(animations[2]);
                 animator.SetBool(animations[3], true);
                 healthBar.gameObject.SetActive(false);
@@ -128,7 +127,7 @@ public class Enemy : Character
     }
 
     public virtual void DestroySelf() { 
-        OnDeath.Invoke();
+        OnDeath.Invoke(stats.experience);
         this.gameObject.SetActive(false);
     }
     private IEnumerator HandleAngerMode()

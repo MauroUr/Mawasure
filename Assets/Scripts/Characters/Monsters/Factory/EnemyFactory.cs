@@ -1,4 +1,3 @@
-
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -7,14 +6,18 @@ public abstract class EnemyFactory : MonoBehaviour
     protected GameObject[] prefabs;
     protected ObjectPool<Enemy> pool = new ObjectPool<Enemy>();
     [SerializeField] private List<Enemy> startingEnemies;
+    [SerializeField] private Player player;
 
     protected Enemy strongest;
     protected Enemy weakest;
 
     private void Start()
     {
-        foreach(Enemy enemy in startingEnemies)
-            enemy.OnDeath += () => pool.Register(enemy);
+        foreach (Enemy enemy in startingEnemies)
+        {
+            enemy.OnDeath += (float experience) => pool.Register(enemy);
+            enemy.OnDeath += (float experience) => player.experience.AddXP(experience);
+        }
     }
     public Enemy SpawnRandomEnemy()
     {
@@ -27,7 +30,8 @@ public abstract class EnemyFactory : MonoBehaviour
 
         GameObject instance = Instantiate(prefabs[Random.Range(0, prefabs.Length)]);
         Enemy enemy = instance.GetComponent<Enemy>();
-        enemy.OnDeath += () => pool.Register(enemy);
+        enemy.OnDeath += (float experience) => pool.Register(enemy);
+        enemy.OnDeath += (float experience) => player.experience.AddXP(experience);
         return enemy;
     }
 
@@ -48,7 +52,9 @@ public abstract class EnemyFactory : MonoBehaviour
 
         GameObject instance = Instantiate(strongest.gameObject);
         Enemy enemy = instance.GetComponent<Enemy>();
-        enemy.OnDeath += () => pool.Register(enemy);
+        enemy.OnDeath += (float experience) => pool.Register(enemy);
+        enemy.OnDeath += (float experience) => player.experience.AddXP(experience);
+
         return enemy;
     }
 
@@ -69,7 +75,9 @@ public abstract class EnemyFactory : MonoBehaviour
 
         GameObject instance = Instantiate(weakest.gameObject);
         Enemy enemy = instance.GetComponent<Enemy>();
-        enemy.OnDeath += () => pool.Register(enemy);
+        enemy.OnDeath += (float experience) => pool.Register(enemy);
+        enemy.OnDeath += (float experience) => player.experience.AddXP(experience);
+
         return enemy;
     }
 

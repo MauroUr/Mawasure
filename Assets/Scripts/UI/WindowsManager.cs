@@ -6,7 +6,7 @@ using UnityEngine;
 public class WindowsManager : MonoBehaviour
 {
     public static WindowsManager instance;
-    private Player player;
+    [SerializeField] private Player player;
     [SerializeField] private GameObject statsPanel;
     [SerializeField] private GameObject spellsPanel;
     [SerializeField] private TextMeshProUGUI spellPointsToAssign;
@@ -30,13 +30,12 @@ public class WindowsManager : MonoBehaviour
 
     private void Start()
     {
-        player = GameObject.FindGameObjectWithTag("Player")?.GetComponent<Player>();
         if (player != null)
         {
             player.OnStatsPressed += ToggleStatsPanel;
             player.OnSpellUIPressed += ToggleSpellsPanel;
         }
-        Experience.Instance.OnLevelUp += AssignPoints;
+        player.experience.OnLevelUp += AssignPoints;
         statPointsIncreased = -7;
         stats[1].text = 8.ToString();
     }

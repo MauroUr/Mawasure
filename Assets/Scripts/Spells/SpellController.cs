@@ -27,14 +27,9 @@ public class SpellController : MonoBehaviour
         spell.ConditionalData.strategy.Cast(spell, target, playerInt, casterTransform);
     }
 
-    public static SpellController Instantiation(ISpells spell , Transform casterTransform)
+    public static SpellController Instantiation(ISpells spell , Vector3 offset, Transform casterTransform)
     {
-        Vector3 calculatedOffset = casterTransform.position +
-                               casterTransform.right * spell.Offset.x +
-                               casterTransform.up * spell.Offset.y +
-                               casterTransform.forward * spell.Offset.z;
-
-        SpellController controller = Instantiate(spell.Prefab, calculatedOffset, Quaternion.identity).GetComponent<SpellController>();
+        SpellController controller = Instantiate(spell.Prefab, offset, Quaternion.identity).GetComponent<SpellController>();
 
         Collider spellCollider = controller.gameObject.GetComponent<Collider>();
         Collider casterCollider = casterTransform.GetComponent<Collider>();

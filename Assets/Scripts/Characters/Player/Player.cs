@@ -36,6 +36,7 @@ public class Player : Character
 
     private List<ISpells> _selectedSpells;
     public Stats stats;
+    public Experience experience;
 
     public event Action OnStatsPressed;
     public event Action OnSpellUIPressed;
@@ -49,6 +50,8 @@ public class Player : Character
     #region Setup
     private void Awake()
     {
+
+        experience = new Experience(1, 99);
         _inputs = GetComponent<PlayerInput>();
         _animator = GetComponent<Animator>();
 
@@ -67,6 +70,7 @@ public class Player : Character
     private new void Start()
     {
         base.Start();
+        
         _castSlider = castBar.GetComponent<Slider>();
         stats = Stats.NewStats();
         stats.dexterity = 8;

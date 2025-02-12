@@ -83,7 +83,6 @@ public class Caster : Enemy
         if (_currentEnemy != null)
             _currentEnemy.BeingTargeted(false);
 
-        animator.ResetTrigger(animations[2]);
         shouldCast = false;
         agent.isStopped = false;
         isCasting = false;

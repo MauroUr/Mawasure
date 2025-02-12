@@ -566,7 +566,8 @@ PrefabInstance:
       propertyPath: animations.Array.data[4]
       value: Dead
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 6730242118015126253, guid: 49c809de4705ee04f958e059bbc46e40, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
@@ -21523,6 +21524,11 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 71739306659890757, guid: 7737d49a9df7ecb4a90dd7b79281f764,
+        type: 3}
+      propertyPath: stats.experience
+      value: 300
+      objectReference: {fileID: 0}
     - target: {fileID: 615655222764566676, guid: 7737d49a9df7ecb4a90dd7b79281f764,
         type: 3}
       propertyPath: m_AnchorMax.x
@@ -23279,6 +23285,7 @@ MonoBehaviour:
   - {fileID: 2131218728}
   - {fileID: 1325527375}
   - {fileID: 1797911182}
+  player: {fileID: 2050022534}
 --- !u!114 &1064263515
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -23293,6 +23300,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   startingEnemies:
   - {fileID: 1649441570}
+  player: {fileID: 2050022534}
 --- !u!114 &1064263516
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -27119,6 +27127,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 290d28e07f0da6a4b9d370ed9d8eccac, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  player: {fileID: 2050022534}
   statsPanel: {fileID: 737264296}
   spellsPanel: {fileID: 518571829}
   spellPointsToAssign: {fileID: 438121850}
