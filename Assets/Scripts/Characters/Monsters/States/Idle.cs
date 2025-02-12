@@ -14,6 +14,8 @@ public class Idle<T> : State<T> where T : Enemy
         if (prevState is Melee<T> || prevState is Cast<T>)
             context.stats.radius /= 2;
 
+        isIdleAfterRoam = false;
+        roamCoroutine = null;
         context.agent.ResetPath();
         lookForPlayerCoroutine = context.StartCoroutine(LookForPlayer());
     }

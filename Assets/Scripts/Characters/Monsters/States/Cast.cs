@@ -23,12 +23,6 @@ public class Cast<T> : State<T> where T : Enemy
 
     public override void Tick()
     {
-        float distance = Vector3.Distance(context.playerFound.transform.position, context.transform.position);
-        if (distance > context.stats.radius && !context.isAngry)
-        {
-            fsm.ChangeState(typeof(Idle<T>));
-            context.CancelCasting();
-            return;
-        }
+
     }
 }

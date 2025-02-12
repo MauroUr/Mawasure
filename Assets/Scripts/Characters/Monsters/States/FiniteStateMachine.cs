@@ -1,10 +1,11 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 public class FiniteStateMachine<T>
 {
     public State<T> CurrentState { get; private set; }
-    private readonly List<Transitions<T>> transitions = new();
+    private List<Transitions<T>> transitions = new();
     private Dictionary<Type, State<T>> _states = new Dictionary<Type, State<T>>();
 
     /// <summary>
@@ -27,6 +28,10 @@ public class FiniteStateMachine<T>
         transitions.Add(transition);
     }
 
+    public Transitions<T> GetTransition(int number)
+    {
+        return transitions[number];
+    }
     public void AddState(State<T> state)
     {
         Type stateType = state.GetType();
@@ -35,7 +40,7 @@ public class FiniteStateMachine<T>
 
     }
 
-    public void ChangeState(Type stateType)
+    private void ChangeState(Type stateType)
     {
         if (!_states.TryGetValue(stateType, out State<T> newState))
             return;

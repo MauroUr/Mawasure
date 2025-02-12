@@ -10,13 +10,18 @@ public class Caster : Enemy
     [SerializeField] protected float castingSpeed;
     protected ISpells _spellInstance;
 
-    private float lifeWhileCasting;
+    private float lifeAtStartOfCast;
     private Character _currentEnemy;
-    [HideInInspector] public bool shouldCast;
+    [HideInInspector] public bool shouldCast = false;
 
     protected override void Start()
     {
         base.Start();
+        CastSetup();
+    }
+
+    protected void CastSetup()
+    {
         Cast<Enemy> castState = new Cast<Enemy>(this, fsm);
 
         Transitions<Enemy> castTransition = new Transitions<Enemy>(castState);
@@ -28,9 +33,11 @@ public class Caster : Enemy
         fsm.AddState(castState);
         fsm.AddTransition(castTransition);
 
+        fsm.GetTransition(0).AddCondition(() => !shouldCast);
         StartCoroutine(RandomCasting());
         _spellInstance = new SpellInstanceWrapper(spell, spellLevel);
     }
+
     private IEnumerator RandomCasting() 
     {
         while (true)
@@ -47,10 +54,10 @@ public class Caster : Enemy
         agent.ResetPath();
         animator.SetBool(animations[4], true);
 
-        lifeWhileCasting = life;
+        lifeAtStartOfCast = life;
         _currentEnemy = enemy.GetComponentInParent<Character>();
 
-        while (_casting < 100 && lifeWhileCasting <= life)
+        while (_casting < 100 && lifeAtStartOfCast <= life)
         {
             this.ShowCastingCircle();
             if (_currentEnemy != null)
@@ -68,29 +75,23 @@ public class Caster : Enemy
         animator.SetBool(animations[4], false);
         _casting = 0;
         
-        if (lifeWhileCasting > life || enemy == null)
-        {
-            this.HideCastingCircle();
-            if (_currentEnemy != null)
-                _currentEnemy.BeingTargeted(false);
-            yield break;
-        }
+        if (lifeAtStartOfCast <= life || enemy == null)
+            animator.SetTrigger(animations[5]);
+        
 
-        animator.SetTrigger(animations[5]);
+        this.HideCastingCircle();
+        if (_currentEnemy != null)
+            _currentEnemy.BeingTargeted(false);
+
         animator.ResetTrigger(animations[2]);
         shouldCast = false;
         agent.isStopped = false;
         isCasting = false;
     }
 
-    public override void CancelCasting()
-    {
-        lifeWhileCasting = life * 2;
-        
-    }
     protected void ThrowSpell()
     {
-        if (!(lifeWhileCasting > life))
+        if (!(lifeAtStartOfCast > life))
             SpellController.Cast(_spellInstance, transform, _currentEnemy.transform, casterInt);
 
         this.HideCastingCircle();

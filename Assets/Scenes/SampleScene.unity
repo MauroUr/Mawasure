@@ -11977,6 +11977,31 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 71739306659890757, guid: 7737d49a9df7ecb4a90dd7b79281f764,
         type: 3}
+      propertyPath: stats.damage
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 71739306659890757, guid: 7737d49a9df7ecb4a90dd7b79281f764,
+        type: 3}
+      propertyPath: stats.radius
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 71739306659890757, guid: 7737d49a9df7ecb4a90dd7b79281f764,
+        type: 3}
+      propertyPath: stats.experience
+      value: 300
+      objectReference: {fileID: 0}
+    - target: {fileID: 71739306659890757, guid: 7737d49a9df7ecb4a90dd7b79281f764,
+        type: 3}
+      propertyPath: stats.attackDelay
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 71739306659890757, guid: 7737d49a9df7ecb4a90dd7b79281f764,
+        type: 3}
+      propertyPath: stats.attackRadius
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 71739306659890757, guid: 7737d49a9df7ecb4a90dd7b79281f764,
+        type: 3}
       propertyPath: animations.Array.size
       value: 4
       objectReference: {fileID: 0}
@@ -21458,10 +21483,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: SlimePBR
       objectReference: {fileID: 0}
-    - target: {fileID: 1931298151966786, guid: 7737d49a9df7ecb4a90dd7b79281f764, type: 3}
-      propertyPath: m_IsActive
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 4047972025199878, guid: 7737d49a9df7ecb4a90dd7b79281f764, type: 3}
       propertyPath: m_LocalPosition.x
       value: 6.481003
@@ -21501,31 +21522,6 @@ PrefabInstance:
     - target: {fileID: 4047972025199878, guid: 7737d49a9df7ecb4a90dd7b79281f764, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 71739306659890757, guid: 7737d49a9df7ecb4a90dd7b79281f764,
-        type: 3}
-      propertyPath: stats.damage
-      value: 10
-      objectReference: {fileID: 0}
-    - target: {fileID: 71739306659890757, guid: 7737d49a9df7ecb4a90dd7b79281f764,
-        type: 3}
-      propertyPath: stats.radius
-      value: 10
-      objectReference: {fileID: 0}
-    - target: {fileID: 71739306659890757, guid: 7737d49a9df7ecb4a90dd7b79281f764,
-        type: 3}
-      propertyPath: stats.experience
-      value: 300
-      objectReference: {fileID: 0}
-    - target: {fileID: 71739306659890757, guid: 7737d49a9df7ecb4a90dd7b79281f764,
-        type: 3}
-      propertyPath: stats.attackDelay
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 71739306659890757, guid: 7737d49a9df7ecb4a90dd7b79281f764,
-        type: 3}
-      propertyPath: stats.attackRadius
-      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 615655222764566676, guid: 7737d49a9df7ecb4a90dd7b79281f764,
         type: 3}
@@ -23209,11 +23205,11 @@ GameObject:
   - component: {fileID: 1064263512}
   - component: {fileID: 1064263511}
   - component: {fileID: 1064263510}
-  - component: {fileID: 1064263513}
   - component: {fileID: 1064263516}
   - component: {fileID: 1064263515}
   - component: {fileID: 1064263514}
   - component: {fileID: 1064263517}
+  - component: {fileID: 1064263518}
   m_Layer: 0
   m_Name: ServiceLocator
   m_TagString: Untagged
@@ -23264,18 +23260,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1064263513
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1064263509}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fc3da599fee0f4a4491186f373088958, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &1064263514
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -23334,6 +23318,18 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 30d55789db50024428811a4c1e603e26, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &1064263518
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1064263509}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 544e2a563331b6149a354bf63b25e4d9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!4 &1067508859 stripped
@@ -25555,6 +25551,31 @@ PrefabInstance:
         type: 3}
       propertyPath: experience
       value: 300
+      objectReference: {fileID: 0}
+    - target: {fileID: 71739306659890757, guid: 7737d49a9df7ecb4a90dd7b79281f764,
+        type: 3}
+      propertyPath: stats.damage
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 71739306659890757, guid: 7737d49a9df7ecb4a90dd7b79281f764,
+        type: 3}
+      propertyPath: stats.radius
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 71739306659890757, guid: 7737d49a9df7ecb4a90dd7b79281f764,
+        type: 3}
+      propertyPath: stats.experience
+      value: 300
+      objectReference: {fileID: 0}
+    - target: {fileID: 71739306659890757, guid: 7737d49a9df7ecb4a90dd7b79281f764,
+        type: 3}
+      propertyPath: stats.attackDelay
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 71739306659890757, guid: 7737d49a9df7ecb4a90dd7b79281f764,
+        type: 3}
+      propertyPath: stats.attackRadius
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 71739306659890757, guid: 7737d49a9df7ecb4a90dd7b79281f764,
         type: 3}
@@ -28535,6 +28556,31 @@ PrefabInstance:
         type: 3}
       propertyPath: experience
       value: 300
+      objectReference: {fileID: 0}
+    - target: {fileID: 71739306659890757, guid: 7737d49a9df7ecb4a90dd7b79281f764,
+        type: 3}
+      propertyPath: stats.damage
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 71739306659890757, guid: 7737d49a9df7ecb4a90dd7b79281f764,
+        type: 3}
+      propertyPath: stats.radius
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 71739306659890757, guid: 7737d49a9df7ecb4a90dd7b79281f764,
+        type: 3}
+      propertyPath: stats.experience
+      value: 300
+      objectReference: {fileID: 0}
+    - target: {fileID: 71739306659890757, guid: 7737d49a9df7ecb4a90dd7b79281f764,
+        type: 3}
+      propertyPath: stats.attackDelay
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 71739306659890757, guid: 7737d49a9df7ecb4a90dd7b79281f764,
+        type: 3}
+      propertyPath: stats.attackRadius
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 71739306659890757, guid: 7737d49a9df7ecb4a90dd7b79281f764,
         type: 3}
@@ -33454,7 +33500,9 @@ MonoBehaviour:
       m_Calls: []
   m_text: 'CTRL + T -> Spells
 
-    CTRL + S -> Stats'
+    CTRL + S -> Stats
+
+    CTRL + C -> Cheats'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -46226,9 +46274,19 @@ PrefabInstance:
       objectReference: {fileID: 330585545}
     - target: {fileID: 1519630559204994937, guid: fe80f3951d745fb43846e89b934353a4,
         type: 3}
+      propertyPath: life
+      value: 200
+      objectReference: {fileID: 0}
+    - target: {fileID: 1519630559204994937, guid: fe80f3951d745fb43846e89b934353a4,
+        type: 3}
       propertyPath: winPanel
       value: 
       objectReference: {fileID: 621281484}
+    - target: {fileID: 1519630559204994937, guid: fe80f3951d745fb43846e89b934353a4,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 1519630559204994937, guid: fe80f3951d745fb43846e89b934353a4,
         type: 3}
       propertyPath: spellLevel
@@ -46238,6 +46296,36 @@ PrefabInstance:
         type: 3}
       propertyPath: castingSpeed
       value: 4.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 1519630559204994937, guid: fe80f3951d745fb43846e89b934353a4,
+        type: 3}
+      propertyPath: stats.damage
+      value: 20
+      objectReference: {fileID: 0}
+    - target: {fileID: 1519630559204994937, guid: fe80f3951d745fb43846e89b934353a4,
+        type: 3}
+      propertyPath: stats.radius
+      value: 100
+      objectReference: {fileID: 0}
+    - target: {fileID: 1519630559204994937, guid: fe80f3951d745fb43846e89b934353a4,
+        type: 3}
+      propertyPath: stats.canCast
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1519630559204994937, guid: fe80f3951d745fb43846e89b934353a4,
+        type: 3}
+      propertyPath: stats.experience
+      value: 1000
+      objectReference: {fileID: 0}
+    - target: {fileID: 1519630559204994937, guid: fe80f3951d745fb43846e89b934353a4,
+        type: 3}
+      propertyPath: stats.attackDelay
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 1519630559204994937, guid: fe80f3951d745fb43846e89b934353a4,
+        type: 3}
+      propertyPath: stats.attackRadius
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 1519630559204994937, guid: fe80f3951d745fb43846e89b934353a4,
         type: 3}
@@ -46267,12 +46355,12 @@ PrefabInstance:
     - target: {fileID: 3315125442743515812, guid: fe80f3951d745fb43846e89b934353a4,
         type: 3}
       propertyPath: m_AnchorMax.x
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3315125442743515812, guid: fe80f3951d745fb43846e89b934353a4,
         type: 3}
       propertyPath: m_AnchorMax.y
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5756670771848041032, guid: fe80f3951d745fb43846e89b934353a4,
         type: 3}
@@ -46332,7 +46420,7 @@ PrefabInstance:
     - target: {fileID: 9196153299304389843, guid: fe80f3951d745fb43846e89b934353a4,
         type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects:

@@ -492,18 +492,20 @@ MonoBehaviour:
   - Dead
   - Cast
   - Casted
-  radius: 15
-  attackRadius: 5
-  damage: 5
+  stats:
+    radius: 0
+    attackRadius: 0
+    damage: 0
+    attackDelay: 0
+    experience: 0
+    canCast: 0
   animator: {fileID: 95206231959375140}
-  attackDelay: 3
-  experience: 400
-  canCast: 1
   agent: {fileID: -1765748290559484539}
   spell: {fileID: 11400000, guid: f2d0749545417a64c8a7e10db7ca826b, type: 2}
   spellLevel: 1
   casterInt: 1
-  castingSpeed: 1
+  castingSpeed: 2.5
+  shouldCast: 0
 --- !u!65 &5820597557116488409
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -534,7 +536,7 @@ Rigidbody:
   m_GameObject: {fileID: 1500939411536426}
   serializedVersion: 4
   m_Mass: 1
-  m_Drag: 0
+  m_Drag: 1
   m_AngularDrag: 0.05
   m_CenterOfMass: {x: 0, y: 0, z: 0}
   m_InertiaTensor: {x: 1, y: 1, z: 1}

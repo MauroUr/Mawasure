@@ -464,7 +464,7 @@ NavMeshAgent:
   m_Enabled: 1
   m_AgentTypeID: 0
   m_Radius: 0.6
-  m_Speed: 2
+  m_Speed: 3
   m_Acceleration: 8
   avoidancePriority: 50
   m_AngularSpeed: 120
@@ -527,7 +527,7 @@ Rigidbody:
   m_GameObject: {fileID: 1931298151966786}
   serializedVersion: 4
   m_Mass: 1
-  m_Drag: 0
+  m_Drag: 1
   m_AngularDrag: 0.05
   m_CenterOfMass: {x: 0, y: 0, z: 0}
   m_InertiaTensor: {x: 1, y: 1, z: 1}
@@ -566,13 +566,14 @@ MonoBehaviour:
   - Attack
   - Hit
   - Dead
-  radius: 10
-  attackRadius: 5
-  damage: 10
+  stats:
+    radius: 10
+    attackRadius: 2
+    damage: 10
+    attackDelay: 2
+    experience: 300
+    canCast: 0
   animator: {fileID: 95457531584545886}
-  attackDelay: 2
-  experience: 300
-  canCast: 0
   agent: {fileID: 5386170693205854143}
 --- !u!1 &2175033000305100478
 GameObject:

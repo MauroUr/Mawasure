@@ -20,11 +20,11 @@ public class Transitions<T>
     {
         if (currentState.GetType() == ToState.GetType())
             return false;
-        foreach (var condition in conditions)
-        {
+        
+        foreach (Func<bool> condition in conditions)
             if (!condition.Invoke())
                 return false;
-        }
+
         return true;
     }
 }

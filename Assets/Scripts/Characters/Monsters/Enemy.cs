@@ -40,7 +40,12 @@ public class Enemy : Character
         isAngry = false;
         agent = GetComponent<NavMeshAgent>();
         stats.attackRadius = agent.stoppingDistance;
+        FSMSetup();
 
+    }
+
+    protected void FSMSetup()
+    {
         Idle<Enemy> idleState = new Idle<Enemy>(this, fsm);
         Melee<Enemy> meleeState = new Melee<Enemy>(this, fsm);
 
@@ -50,11 +55,6 @@ public class Enemy : Character
         states.Add(meleeState);
 
         fsm = new FiniteStateMachine<Enemy>(states);
-
-        Transitions<Enemy> meleeTransition = new Transitions<Enemy>(meleeState);
-        meleeTransition.AddCondition(() => playerFound);
-        meleeTransition.AddCondition(() => !isCasting);
-        fsm.AddTransition(meleeTransition);
 
         Transitions<Enemy> idleTransition = new Transitions<Enemy>(idleState);
         idleTransition.AddCondition(() =>
@@ -67,12 +67,16 @@ public class Enemy : Character
         });
         fsm.AddTransition(idleTransition);
 
+        Transitions<Enemy> meleeTransition = new Transitions<Enemy>(meleeState);
+        meleeTransition.AddCondition(() => playerFound);
+        meleeTransition.AddCondition(() => !isCasting);
+        fsm.AddTransition(meleeTransition);
+        
     }
 
     protected virtual void LateUpdate()
     {
         healthBar.gameObject.transform.rotation = Camera.main.transform.rotation;
-
         fsm.Tick();
     }
 
@@ -137,11 +141,6 @@ public class Enemy : Character
     public virtual IEnumerator CastSpell(GameObject enemy)
     {
         throw new System.NotImplementedException("Cast method must be implemented in the subclass.");
-    }
-
-    public virtual void CancelCasting()
-    {
-        throw new System.NotImplementedException("Cancel cast method must be implemented in the subclass.");
     }
 
 }
