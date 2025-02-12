@@ -9,7 +9,7 @@ public class SpellController : MonoBehaviour
 
     private void Update()
     {
-        if (_target == null)
+        if (!_target.gameObject.activeSelf || _target == null)
         {
             Destroy(this.gameObject);
             return;

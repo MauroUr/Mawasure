@@ -49,6 +49,7 @@ public class Caster : Enemy
     }
     public override IEnumerator CastSpell(GameObject enemy)
     {
+        animator.ResetTrigger(animations[2]);
         isCasting = true;
         agent.isStopped = true;
         agent.ResetPath();
