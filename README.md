@@ -3,6 +3,7 @@
 ## 📌 Description
 
 Mawasure is a Unity RPG where players take on the role of a mage, designing combat strategies through a modular spell system. This project demonstrates the use of multiple design patterns to optimize performance, scalability, and code maintainability.
+You can download the build to test the prototype here: https://mauronu.itch.io/mawasure
 
 ## 🎮 Main Features
 
