@@ -7,10 +7,12 @@ public class FireCauldron : MonoBehaviour
     [SerializeField] private GameObject fence;
     [SerializeField] private Outline thisOutliner;
     [SerializeField] private Spawner spawner;
+    private bool _hasSpawned = false;
+
     private void OnTriggerEnter(Collider other)
     {
         if (other is CapsuleCollider)
-            AdvancePuzzle(true);
+            AdvancePuzzle(!_hasSpawned);
     }
 
     public void AdvancePuzzle(bool shouldSpawn)
@@ -21,8 +23,11 @@ public class FireCauldron : MonoBehaviour
         if (thisFire.activeSelf && otherFire.activeSelf)
         {
             fence.SetActive(false);
-            if(shouldSpawn)
+            if (shouldSpawn)
+            {
                 spawner.Spawn();
+                _hasSpawned = true;
+            }
         }
     }
 
