@@ -19,21 +19,23 @@ You can download the build to test the prototype here: https://mauronu.itch.io/m
 
 ## 🛠️ Design Patterns Implemented
 
-**Object Pool:** Optimizes instance creation and reuse, reducing garbage collector load.
+**Object Pool:** A creational pattern that minimizes memory use and processing time by reusing objects instead of creating and destroying them repeatedly.
 
-**Service Locator:** Facilitates dependency management and access to core services such as input handling and visual effects.
+**Service Locator:** A pattern that provides a centralized registry to retrieve services, reducing dependency coupling in a flexible way.
 
-**Flyweight:** Reduces memory usage by sharing data for similar entities, such as animations and spell attributes.
+**Flyweight:** A structural pattern that reduces memory consumption by sharing common parts of objects instead of storing them separately.
 
-**Command:** Separates player input logic from action execution, allowing greater flexibility and decoupling.
+**Command:** A behavioral pattern that turns a request into a stand-alone object, allowing parameterization, queuing, and undo/redo operations.
 
-**Abstract Factory:** Provides an interface for creating families of related objects, such as different spell types.
+**Abstract Factory:** A creational pattern that provides an interface for creating families of related objects without specifying their concrete classes.
 
-**State and State Machine:** Controls enemy behavior and combat flow through clear and flexible state management.
+**State:** A behavioral pattern that allows an object to change its behavior when its internal state changes. Instead of using conditionals, different states are represented as separate classes, making transitions more explicit and manageable.
 
-**Strategy:** Defines different attack and defense strategies for enemies, making combat more varied.
+**State Machine:** A design concept that models an entity as a set of states, transitions, and actions. It provides a structured way to handle different behaviors and conditions, often implemented using the *State pattern* to manage state transitions dynamically.
 
-**Wrapper:** Encapsulates services and functionalities to simplify usage and improve modularity.
+**Strategy:** A behavioral pattern that lets a class define a family of algorithms, encapsulate each one, and switch them dynamically.
+
+**Wrapper:** A structural pattern that provides a simplified interface to a more complex system, improving usability and modularity, and enhancing functionality.
 
 ## 🚀 Installation & Execution
 
